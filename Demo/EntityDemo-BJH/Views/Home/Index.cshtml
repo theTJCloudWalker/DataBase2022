@@ -1,42 +1,8 @@
-﻿@model List<User>
-@{
+﻿@{
     ViewData["Title"] = "Home Page";
 }
 
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
     <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-    <a href="./Home/AddUser">增加测试用户</a>
-</div>
-
-<div class="panel panel-default todo-panel">
-    <div class="panel-heading">@ViewData["Title"]</div>
-
-    <table class="table table-hover">
-        <thead>
-            <tr>
-                <td>✔</td>
-                <td>ID</td>
-                <td>Name</td>
-                <td>Passenger_Id</td>
-                <td>Password</td>
-                <td>Phone_Number</td>
-                <td></td>
-            </tr>
-        </thead>
-
-        @foreach (var user in Model) {
-            <tr>
-                <td>
-                    <input type="checkbox" class="done-checkbox">
-                </td>
-                <td>@user.Id</td>
-                <td>@user.Name</td>
-                <td>@user.Passenger_ID</td>
-                <td>@user.Password</td>
-                <td>@user.Phone_Number</td>
-                <td> <a href="./Home/DeleteUser/@user.Id">删除</a> </td>
-            </tr>
-        }
-    </table>
 </div>
