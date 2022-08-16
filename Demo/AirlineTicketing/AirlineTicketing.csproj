@@ -7,9 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="SqlSugarCore" Version="5.1.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.0" />
+    <PackageReference Include="SqlSugarCore" Version="5.1.2.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
-    <PackageReference Include="xunit.core" Version="2.4.1" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.22.0" />
+    <PackageReference Include="xunit.assert" Version="2.4.2" />
+    <PackageReference Include="xunit.core" Version="2.4.2" />
   </ItemGroup>
 
   <ItemGroup>

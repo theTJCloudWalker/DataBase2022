@@ -1,24 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using SqlSugar;
-namespace AirlineTicketing.Model
-{
+﻿using SqlSugar;
+
+namespace AirlineTicketing.Model {
     /// <summary>
     /// 
     ///</summary>
     [SugarTable("PASSENGER_TABLE")]
-    public class PassengerTable
-    {
+    public class PassengerTable {
         /// <summary>
         /// 用户主码 
         ///</summary>
-         [SugarColumn(ColumnName="USER_ID" ,IsPrimaryKey = true   )]
-         public string? UserId { get; set; }
+        [SugarColumn(ColumnName = "USER_ID", IsPrimaryKey = true)]
+        public string? UserId { get; set; }
+
         /// <summary>
         /// 身份证号 
         ///</summary>
-         [SugarColumn(ColumnName="PASSENGER_ID" ,IsPrimaryKey = true   )]
-         public string? PassengerId { get; set; }
+        [SugarColumn(ColumnName = "PASSENGER_ID", IsPrimaryKey = true)]
+        public string? PassengerId { get; set; }
     }
 }
