@@ -4,66 +4,78 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AirlineTicketing.Service {
     /// <summary>
-    /// ÓÃ»§ ·şÎñ²ã ½Ó¿Ú
+    /// ç”¨æˆ· æœåŠ¡å±‚ æ¥å£
     /// </summary>
     public interface IUserService {
         /// <summary>
-        /// »ñÈ¡ËùÓĞÓÃ»§
+        /// è·å–æ‰€æœ‰ç”¨æˆ·
         /// </summary>
-        /// <returns>ÓÃ»§List</returns>
+        /// <returns>ç”¨æˆ·List</returns>
         public IEnumerable<User> GetUsers();
     }
 
 
     /// <summary>
-    /// ÓÃ»§ ·şÎñ²ã ½Ó¿ÚÊµÏÖ
+    /// ç”¨æˆ· æœåŠ¡å±‚ æ¥å£å®ç°
     /// </summary>
     public class UserService : IUserService {
         /// <summary>
-        /// Dao²ã ¶ÔÏó
+        /// Daoå±‚ å¯¹è±¡
         /// </summary>
-        private readonly UserDao userDao = new UserDao();
+        private readonly UserDao _userDao = new UserDao();
 
         /// <summary>
-        /// »ñÈ¡ËùÓĞÓÃ»§
+        /// è·å–æ‰€æœ‰ç”¨æˆ·
         /// </summary>
-        /// <returns>ÓÃ»§¶ÔÏóÁĞ±í</returns>
+        /// <returns>ç”¨æˆ·å¯¹è±¡åˆ—è¡¨</returns>
         public IEnumerable<User> GetUsers() {
-            return userDao.GetList().ToList();
+            return _userDao.GetList().ToList();
         }
 
         /// <summary>
-        /// ÓÃId²éÑ¯ÓÃ»§
+        /// ç”¨IdæŸ¥è¯¢ç”¨æˆ·
         /// </summary>
-        /// <param name="id">ÓÃ»§Id</param>
-        /// <returns>ÓÃ»§¶ÔÏó</returns>
-        public User GetUserById(string id) {
-            return userDao.GetById(id);
+        /// <param name="id">ç”¨æˆ·Id</param>
+        /// <returns>ç”¨æˆ·å¯¹è±¡</returns>
+        public User GetUserById(string? id) {
+            return _userDao.GetById(id);
         }
 
         /// <summary>
-        /// ÓÃÖ÷¼üÉ¾³ıÓÃ»§
+        /// ç”¨ä¸»é”®åˆ é™¤ç”¨æˆ·
         /// </summary>
         /// <param name="ids"></param>
         /// <returns></returns>
         public bool DeleteUserByIds([FromBody] object[] ids) {
-            return userDao.DeleteById(ids);
+            return _userDao.DeleteById(ids);
         }
-
+        
         /// <summary>
-        /// Ìí¼Ó 
+        /// æ·»åŠ  
         /// </summary>
         /// <returns></returns>
         public bool Add([FromBody] User data) {
-            return userDao.Insert(data);
+            return _userDao.Insert(data);
         }
 
         /// <summary>
-        /// ĞŞ¸Ä
+        /// ä¿®æ”¹
         /// </summary>
         /// <returns></returns>
         public bool Update([FromBody] User data) {
-            return userDao.Update(data);
+            return _userDao.Update(data);
+        }
+
+        public IEnumerable<User> GetUserByNames(List<string> names) {
+            return _userDao.GetUserByNames(names);
+        }
+
+        public User GetUserByName(string name) {
+            return _userDao.GetUserByName(name);
+        }
+
+        public int GetUserCount() {
+            return _userDao.Count(it => it.Id != null);
         }
     }
 }

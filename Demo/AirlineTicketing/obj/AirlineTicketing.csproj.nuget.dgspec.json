@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Administrator\\Desktop\\workspace\\数据库课程设计\\demo\\DatabasePrincipleProject\\AirlineTicketing\\AirlineTicketing.csproj": {}
+    "C:\\Users\\Administrator\\Desktop\\workspace\\数据库课程设计\\demo\\DataBase2022\\Demo\\AirlineTicketing\\AirlineTicketing.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Administrator\\Desktop\\workspace\\数据库课程设计\\demo\\DatabasePrincipleProject\\AirlineTicketing\\AirlineTicketing.csproj": {
+    "C:\\Users\\Administrator\\Desktop\\workspace\\数据库课程设计\\demo\\DataBase2022\\Demo\\AirlineTicketing\\AirlineTicketing.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Administrator\\Desktop\\workspace\\数据库课程设计\\demo\\DatabasePrincipleProject\\AirlineTicketing\\AirlineTicketing.csproj",
+        "projectUniqueName": "C:\\Users\\Administrator\\Desktop\\workspace\\数据库课程设计\\demo\\DataBase2022\\Demo\\AirlineTicketing\\AirlineTicketing.csproj",
         "projectName": "AirlineTicketing",
-        "projectPath": "C:\\Users\\Administrator\\Desktop\\workspace\\数据库课程设计\\demo\\DatabasePrincipleProject\\AirlineTicketing\\AirlineTicketing.csproj",
+        "projectPath": "C:\\Users\\Administrator\\Desktop\\workspace\\数据库课程设计\\demo\\DataBase2022\\Demo\\AirlineTicketing\\AirlineTicketing.csproj",
         "packagesPath": "C:\\Users\\Administrator\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Administrator\\Desktop\\workspace\\数据库课程设计\\demo\\DatabasePrincipleProject\\AirlineTicketing\\obj\\",
+        "outputPath": "C:\\Users\\Administrator\\Desktop\\workspace\\数据库课程设计\\demo\\DataBase2022\\Demo\\AirlineTicketing\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Administrator\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -40,17 +40,29 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "dependencies": {
+            "Microsoft.NET.Test.Sdk": {
+              "target": "Package",
+              "version": "[17.3.0, )"
+            },
             "SqlSugarCore": {
               "target": "Package",
-              "version": "[5.1.0, )"
+              "version": "[5.1.2.1, )"
             },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
               "version": "[6.2.3, )"
             },
+            "System.IdentityModel.Tokens.Jwt": {
+              "target": "Package",
+              "version": "[6.22.0, )"
+            },
+            "xunit.assert": {
+              "target": "Package",
+              "version": "[2.4.2, )"
+            },
             "xunit.core": {
               "target": "Package",
-              "version": "[2.4.1, )"
+              "version": "[2.4.2, )"
             }
           },
           "imports": [
