@@ -6,8 +6,7 @@ namespace AirlineTicketing.Dao {
         /// 构造函数
         /// </summary>
         /// <param name="context"></param>
-        public Repository(ISqlSugarClient? context = null) : base(context) //注意这里要有默认值等于null
-        {
+        public Repository(ISqlSugarClient? context = null) : base(context) {
             if (context == null) {
                 base.Context = Db;
             }

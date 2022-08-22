@@ -14,7 +14,7 @@ namespace AirlineTicketing.Common {
             Msg = "Uninitialized";
             Data = null;
         }
-
+        
         /// <summary>
         /// 传入状态码枚举和返回数据，构造统一的返回类
         /// </summary>

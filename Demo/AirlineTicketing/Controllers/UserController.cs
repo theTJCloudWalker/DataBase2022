@@ -7,9 +7,13 @@ namespace AirlineTicketing.Controllers {
     [ApiController]
     public class UserController : ControllerBase {
         /// <summary>
-        /// Service层对象
+        /// Service层接口
         /// </summary>
-        private readonly UserService _userService = new UserService();
+        private readonly IUserService _userService;
+
+        public UserController() {
+            _userService = new UserService();
+        }
 
         /// <summary>
         /// 查询所有的用户
@@ -94,7 +98,7 @@ namespace AirlineTicketing.Controllers {
         /// <returns></returns>
         [HttpPost("Passenger/Update")]
         public Result UpdatePassenger([FromBody] Passenger passenger) {
-            return new Result();
+            return new Result(); 
         }
         
         /// <summary>
