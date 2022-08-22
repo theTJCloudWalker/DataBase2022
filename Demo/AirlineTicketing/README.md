@@ -230,5 +230,3 @@ public enum ResultCode {
 - 用dynamic绕过编译检查
 - 用JsonConvert获取内部标签和数据
 - 再用Service层进行处理
-
-2. 
