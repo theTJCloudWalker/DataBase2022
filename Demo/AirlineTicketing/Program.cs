@@ -7,7 +7,20 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddCors(options => {
+    options.AddPolicy("cors", builder => {
+        builder.AllowAnyOrigin() //允许所有Origin策略
+
+            //允许所有请求方法：Get,Post,Put,Delete
+            .AllowAnyMethod()
+
+            //允许所有请求头:application/json
+            .AllowAnyHeader();
+    });
+});
+
 var app = builder.Build();
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment()) {
@@ -16,6 +29,8 @@ if (app.Environment.IsDevelopment()) {
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("cors");
 
 app.UseAuthorization();
 

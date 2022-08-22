@@ -106,63 +106,63 @@ public enum ResultCode {
 
 1. Repository类：继承SimpleClient类，主要实现对数据库的访问，配置日志
 
-	```c#
-	/// <summary>
-	/// SqlSugarScope操作数据库是线程安全的可以单例
-	/// </summary>
-	public static SqlSugarScope Db = new SqlSugarScope(new ConnectionConfig() {
-	    DbType = SqlSugar.DbType.Oracle,
-	    ConnectionString = @"Data Source=150.158.80.33/orclpdb1;User ID=B2052526;Password=123456;",
-	    IsAutoCloseConnection = true
-	},
-	                                                   db => {
-	                                                       // 输出日志
-	                                                       db.Aop.OnLogExecuting = (s, p) => {
-	                                                           Console.WriteLine(s);
-	                                                           Console.WriteLine(string.Join(",", p.Select(a => a.ParameterName + ":" + a.Value)));
-	                                                       };
-	                                                   });
-	```
+   ```c#
+   /// <summary>
+   /// SqlSugarScope操作数据库是线程安全的可以单例
+   /// </summary>
+   public static SqlSugarScope Db = new SqlSugarScope(new ConnectionConfig() {
+       DbType = SqlSugar.DbType.Oracle,
+       ConnectionString = @"Data Source=150.158.80.33/orclpdb1;User ID=B2052526;Password=123456;",
+       IsAutoCloseConnection = true
+   },
+                                                      db => {
+                                                          // 输出日志
+                                                          db.Aop.OnLogExecuting = (s, p) => {
+                                                              Console.WriteLine(s);
+                                                              Console.WriteLine(string.Join(",", p.Select(a => a.ParameterName + ":" + a.Value)));
+                                                          };
+                                                      });
+   ```
 
 2. Dao层的类都需继承Repository，都使用Repository中的静态字段SqlSugarScope
 
 #### 2.4 Model
 
 1. 举例：User类
-	```c#
-	/// <summary>
-	/// 
-	///</summary>
-	[SugarTable("USER")]
-	public class User
-	{
-	    /// <summary>
-	    /// 用户主码 
-	    ///</summary>
-	    [SugarColumn(ColumnName="ID" ,IsPrimaryKey = true   )]
-	    public string? Id { get; set; }
-	    /// <summary>
-	    /// 用户姓名 
-	    ///</summary>
-	    [SugarColumn(ColumnName="NAME"    )]
-	    public string? Name { get; set; }
-	    /// <summary>
-	    /// 电话号码 
-	    ///</summary>
-	    [SugarColumn(ColumnName="PHONE_NUMBER"    )]
-	    public string? PhoneNumber { get; set; }
-	    /// <summary>
-	    /// 身份证号 
-	    ///</summary>
-	    [SugarColumn(ColumnName="PASSENGER_ID"    )]
-	    public string? PassengerId { get; set; }
-	    /// <summary>
-	    /// 用户密码(sha256) 
-	    ///</summary>
-	    [SugarColumn(ColumnName="PASSWORD"    )]
-	    public string? Password { get; set; }
-	}
-	```
+   ```c#
+   /// <summary>
+   /// 
+   ///</summary>
+   [SugarTable("USER")]
+   public class User
+   {
+       /// <summary>
+       /// 用户主码 
+       ///</summary>
+       [SugarColumn(ColumnName="ID" ,IsPrimaryKey = true   )]
+       public string? Id { get; set; }
+       /// <summary>
+       /// 用户姓名 
+       ///</summary>
+       [SugarColumn(ColumnName="NAME"    )]
+       public string? Name { get; set; }
+       /// <summary>
+       /// 电话号码 
+       ///</summary>
+       [SugarColumn(ColumnName="PHONE_NUMBER"    )]
+       public string? PhoneNumber { get; set; }
+       /// <summary>
+       /// 身份证号 
+       ///</summary>
+       [SugarColumn(ColumnName="PASSENGER_ID"    )]
+       public string? PassengerId { get; set; }
+       /// <summary>
+       /// 用户密码(sha256) 
+       ///</summary>
+       [SugarColumn(ColumnName="PASSWORD"    )]
+       public string? Password { get; set; }
+   }
+   ```
 
 #### 2.5 Service
 
@@ -212,3 +212,23 @@ public enum ResultCode {
 #### 2.6 Util
 
 暂无内容，之后添加
+
+## 2022.08.22 BJH
+
+1. 解决axios.post请求500,400,415等错误(以登录为例)
+
+```csharp
+    public Result Login([FromBody] dynamic loginData)
+```
+
+```csharp
+    var o = JsonConvert.DeserializeObject(Convert.ToString(loginData));
+    string userName = o.userName;
+    string passWord = o.passWord;
+```
+- 后端加上注解[FromBody]
+- 用dynamic绕过编译检查
+- 用JsonConvert获取内部标签和数据
+- 再用Service层进行处理
+
+2. 

@@ -12,6 +12,21 @@ namespace AirlineTicketing.Service {
         /// </summary>
         /// <returns>用户List</returns>
         public IEnumerable<User> GetUsers();
+
+        public User GetUserById(string? id);
+
+        public bool DeleteUserByIds([FromBody] object[] ids);
+        
+        public bool Add([FromBody] User data);
+
+        public bool Update([FromBody] User data);
+
+        public IEnumerable<User> GetUserByNames(List<string> names);
+
+        public User GetUserByName(string name);
+
+        public int GetUserCount();
+
     }
 
 
@@ -23,7 +38,7 @@ namespace AirlineTicketing.Service {
         /// Dao层 对象
         /// </summary>
         private readonly UserDao _userDao = new UserDao();
-
+        
         /// <summary>
         /// 获取所有用户
         /// </summary>
