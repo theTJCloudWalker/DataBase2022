@@ -68,12 +68,22 @@ namespace AirlineTicketing.Common {
 
         // 用户注册
         [Description("用户已注册")] RegisterUserNameExist = 1100,
-
+        [Description("注册用户添加失败")] RegisterUserInsertFailure = 1101,
+        
         // 用户删除
         [Description("删除用户不存在")] CancelUserNotFound = 1200,
         [Description("删除操作失败")] CancelError = 1201,
 
         // 登录验证
         [Description("用户未登录")] UserNotLogin = 1300,
+        
+        // 个人信息管理
+        [Description("用户个人信息不存在")] UserProfileNotFound = 1400,
+        [Description("用户名不存在")] UsernameNotFound = 1401,
+        [Description("新用户名和原用户名一致")] NewUsernameConflict = 1402,
+        [Description("新用户名已存在")] NewUsernameExist = 1403,
+        [Description("新密码和原密码一致")] NewPasswordConflict = 1404,
+        [Description("新电话号码和原电话号码一致")] NewPhoneNumberConflict = 1405,
+        [Description("新身份证号和身份证号一致")] NewPassengerIdConflict = 1405,
     }
 }
