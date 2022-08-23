@@ -14,7 +14,25 @@ namespace AirlineTicketing.Controllers {
     [ApiController]
     public class LoginController : ControllerBase {
         private readonly UserService _userService = new UserService();
+        
+        /// <summary>
+        /// 登录数据
+        /// </summary>
+        public class LoginData {
+            public string? UserName { get; set; }
+            public string? PassWord { get; set; }
+        }
 
+        /// <summary>
+        /// 注册数据
+        /// </summary>
+        public class RegisterData {
+            public string? UserName { get; set; }
+            public string? PassWord { get; set; }
+            public string? PhoneNumber { get; set; }
+            public string? PassengerId { get; set; }
+        }
+        
         /// <summary>
         /// 用户注册
         /// </summary>
@@ -22,28 +40,19 @@ namespace AirlineTicketing.Controllers {
         /// <returns>注册成功返回用户信息，注册失败抛出异常</returns>
         /// <exception cref="Exception">空输入非法</exception>
         [HttpPost("Register")]
-        public Result Register([FromBody] dynamic registerData) {
-            // TODO 测试Axios
+        public Result Register([FromBody] RegisterData registerData) {
             // 可行
             // POST请求用dynamic接收 反序列化后得到字段数据
-            // 如果用RegisterData? 编译检查不通过
-            var o = JsonConvert.DeserializeObject(Convert.ToString(registerData));
 
-            string userName = o.userName;
-            string passWord = o.passWord;
-            string phoneNumber = o.phoneNumber;
-            string passengerId = o.passengerId;
+            var userName = registerData.UserName;
+            var passWord = registerData.PassWord;
+            var phoneNumber = registerData.PhoneNumber;
+            var passengerId = registerData.PassengerId;
 
-
-            // var userName = registerData.userName;
-            // var passWord = registerData.passWord;
-            // var phoneNumber = registerData.phoneNumber;
-            // var passengerId = registerData.passengerId;
-
-            Console.WriteLine(userName);
-            Console.WriteLine(passWord);
-            Console.WriteLine(phoneNumber);
-            Console.WriteLine(passengerId);
+            // Console.WriteLine(userName);
+            // Console.WriteLine(passWord);
+            // Console.WriteLine(phoneNumber);
+            // Console.WriteLine(passengerId);
 
 
             // 检查输入
@@ -69,7 +78,7 @@ namespace AirlineTicketing.Controllers {
                 };
                 return _userService.Add(newUser)
                     ? new Result(ResultCode.Success, newUser)
-                    : new Result(ResultCode.Failure, newUser);
+                    : new Result(ResultCode.RegisterUserInsertFailure, newUser);
             }
 
             // 查询到结果，返回已注册的状态码
@@ -77,21 +86,21 @@ namespace AirlineTicketing.Controllers {
         }
 
 
-        // TODO 改为dynamic后测试
-
         /// <summary>
         /// 用户登录
+        /// <param name="loginData">登录信息</param>
         /// </summary>
-        /// <param name="userName">用户名</param>
-        /// <param name="passWord">密码</param>
         /// <returns>登录成功返回用户信息，登录失败返回null</returns>
         [HttpPost("Login")]
-        public Result Login([FromBody] dynamic loginData) {
+        public Result Login([FromBody] LoginData loginData) {
             // TODO 测试前端axios发post请求是否可行
             // 可行
-            var o = JsonConvert.DeserializeObject(Convert.ToString(loginData));
-            string userName = o.userName;
-            string passWord = o.passWord;
+            // var o = JsonConvert.DeserializeObject(Convert.ToString(loginData));
+            // string userName = o.userName;
+            // string passWord = o.passWord;
+
+            var userName = loginData.UserName;
+            var passWord = loginData.PassWord;
             
             Console.WriteLine(userName);
             Console.WriteLine(passWord);
@@ -131,17 +140,10 @@ namespace AirlineTicketing.Controllers {
             if (_userService.DeleteUserByIds(new object[] {userByName.Id})) {
                 return new Result(ResultCode.Success, userByName);
             }
-
+            
+            // 删除错误
             return new Result(ResultCode.CancelError, null);
         }
     }
 }
 
-
-// 约定一个格式
-public class RegisterData {
-    public string userName;
-    public string passWord;
-    public string phoneNumber;
-    public string passengerId;
-}

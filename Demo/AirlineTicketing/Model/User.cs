@@ -35,5 +35,11 @@ namespace AirlineTicketing.Model {
         ///</summary>
         [SugarColumn(ColumnName = "PASSWORD")]
         public string? Password { get; set; }
+        
+        /// <summary>
+        /// 用户余额
+        /// </summary>
+        [SugarColumn(ColumnName = "AMOUNT")]
+        public decimal? Amount { get; set; }
     }
 }
