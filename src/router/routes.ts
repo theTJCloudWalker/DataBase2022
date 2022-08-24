@@ -46,6 +46,11 @@ const routes = [
             name: 'message',
             component: () => import('@/view/myspace/message.vue')
         },
+        {
+            path: '/myspace/myorder',
+            name: 'myorder',
+            component: () => import('@/view/myspace/myorder.vue')
+        },
         ]
         
     },

@@ -54,15 +54,15 @@
 
             <el-menu-item-group>
 
-              <router-link class="alink" to="/myspace/">
-                <el-menu-item index="5-1">
-                  历史订单
+              <router-link class="alink" to="/myspace/myorder">
+                <el-menu-item index="2-1">
+                  待出行
                 </el-menu-item>
               </router-link>
 
               <router-link class="alink" to="/myspace/">
                 <el-menu-item index="5-2">
-                  正在进行的订单
+                  待支付
                 </el-menu-item>
               </router-link>
 
