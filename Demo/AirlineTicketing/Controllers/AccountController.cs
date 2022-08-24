@@ -71,23 +71,8 @@ public class AccountController : Controller {
         }
 
         // 检查通过则更新数据
-        // 构造一个新用户
-        var newUser = new User() {
-            Id = Guid.NewGuid().ToString(),
-            Name = newUserName,
-            Password = userByName.Password,
-            PassengerId = userByName.PassengerId,
-            PhoneNumber = userByName.PhoneNumber
-        };
-        // 删除原用户
-        if (!_userService.DeleteUserByIds(new object[] {userByName.Id})) {
-            throw new Exception("删除用户失败");
-        }
-
-        if (!_userService.Add(newUser)) {
-            throw new Exception("增加新用户失败");
-        }
-
+        var newUser = _userService.UpdateUserName(userByName.Name!, newUserName);
+        
         return new Result(ResultCode.Success, newUser);
     }
 
