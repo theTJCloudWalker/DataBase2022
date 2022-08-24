@@ -4,11 +4,18 @@ const routes = [
         path: '/login',
         component: () => import('@/view/LoginRegister.vue')
     },
+
     {
-        name: 'HomePage',
-        path: '/',
-        component: () => import('@/view/Home.vue')
+        name: 'TicketInquiry',
+        path: '/TicketInquiry',
+        component: () => import('@/view/TicketInquiry.vue')
     },
+    {
+        name: 'FrontPage',
+        path: '/',
+        component: () => import('@/view/FrontPage.vue')
+    },
+
     {
         name: 'Myspace',
         path: '/myspace',
