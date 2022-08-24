@@ -72,7 +72,7 @@ public class AccountController : Controller {
 
         // 检查通过则更新数据
         var newUser = _userService.UpdateUserName(userByName.Name!, newUserName);
-        
+
         return new Result(ResultCode.Success, newUser);
     }
 
@@ -107,22 +107,7 @@ public class AccountController : Controller {
         }
 
         // 修改密码
-        // 构造一个新用户
-        var newUser = new User() {
-            Id = userByName.Id,
-            Name = userByName.Name,
-            Password = Password.EncryptPassword(newPassword!),
-            PassengerId = userByName.PassengerId,
-            PhoneNumber = userByName.PhoneNumber
-        };
-        // 删除原用户
-        if (!_userService.DeleteUserByIds(new object[] {userByName.Id})) {
-            throw new Exception("删除用户失败");
-        }
-
-        if (!_userService.Add(newUser)) {
-            throw new Exception("增加新用户失败");
-        }
+        var newUser = _userService.UpdatePassword(userByName.Name!, newPassword!);
 
         return new Result(ResultCode.Success, newUser);
     }
@@ -158,23 +143,8 @@ public class AccountController : Controller {
             return new Result(ResultCode.NewPhoneNumberConflict, null);
         }
 
-        // 修改密码
-        // 构造一个新用户
-        var newUser = new User() {
-            Id = userByName.Id,
-            Name = userByName.Name,
-            Password = userByName.Password,
-            PassengerId = userByName.PassengerId,
-            PhoneNumber = newPhoneNumber
-        };
-        // 删除原用户
-        if (!_userService.DeleteUserByIds(new object[] {userByName.Id})) {
-            throw new Exception("删除用户失败");
-        }
-
-        if (!_userService.Add(newUser)) {
-            throw new Exception("增加新用户失败");
-        }
+        // 修改电话
+        var newUser = _userService.UpdatePhoneNumber(userByName.Name!, newPhoneNumber!);
 
         return new Result(ResultCode.Success, newUser);
     }
@@ -209,23 +179,8 @@ public class AccountController : Controller {
             return new Result(ResultCode.NewPassengerIdConflict, null);
         }
 
-        // 修改密码
-        // 构造一个新用户
-        var newUser = new User() {
-            Id = userByName.Id,
-            Name = userByName.Name,
-            Password = userByName.Password,
-            PassengerId = newPassengerId,
-            PhoneNumber = userByName.PhoneNumber
-        };
-        // 删除原用户
-        if (!_userService.DeleteUserByIds(new object[] {userByName.Id})) {
-            throw new Exception("删除用户失败");
-        }
-
-        if (!_userService.Add(newUser)) {
-            throw new Exception("增加新用户失败");
-        }
+        // 修改身份证号
+        var newUser = _userService.UpdatePassengerId(userByName.Name!, newPassengerId!);
 
         return new Result(ResultCode.Success, newUser);
     }
