@@ -11,12 +11,7 @@ namespace AirlineTicketing.Model {
         ///</summary>
         [SugarColumn(ColumnName = "ID")]
         public decimal? Id { get; set; }
-
-        /// <summary>
-        /// 身份证号 
-        ///</summary>
-        [SugarColumn(ColumnName = "PASSENGER_ID")]
-        public string? PassengerId { get; set; }
+        
 
         /// <summary>
         /// 机票主码 

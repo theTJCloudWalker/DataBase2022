@@ -22,7 +22,7 @@ namespace AirlineTicketing.Model {
         /// 电话 
         ///</summary>
         [SugarColumn(ColumnName = "PHONE_NUMBER")]
-        public decimal? PhoneNumber { get; set; }
+        public string? PhoneNumber { get; set; }
 
         /// <summary>
         /// 年龄 

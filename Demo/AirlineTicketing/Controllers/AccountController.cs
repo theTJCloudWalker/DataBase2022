@@ -38,6 +38,27 @@ public class AccountController : Controller {
     }
 
     /// <summary>
+    /// 更新用户数据
+    /// <para>用Username获取当前用户</para>
+    /// </summary>
+    /// <param name="data">新的用户数据</param>
+    /// <returns></returns>
+    [HttpPost("UpdateProfile")]
+    public Result UpdateProfile([FromBody] User data) {
+        var user = _userService.GetUserByName(data.Name!);
+        if (user.Id == null) {
+            return new Result(ResultCode.UsernameNotFound, null);
+        }
+
+        if (_userService.Update(data)) {
+            return new Result(ResultCode.Success, _userService.GetUserByName(data.Name!));
+        }
+
+        return new Result(ResultCode.Failure, null);
+    }
+
+
+    /// <summary>
     /// 更新用户名数据
     /// </summary>
     public class UpdateUserNameData {

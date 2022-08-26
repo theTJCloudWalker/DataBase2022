@@ -29,5 +29,11 @@ namespace AirlineTicketing.Model {
         ///</summary>
         [SugarColumn(ColumnName = "AMOUNT")]
         public decimal? Amount { get; set; }
+
+        /// <summary>
+        /// 订单是否被支付
+        /// </summary>
+        [SugarColumn(ColumnName = "IS_PAID")]
+        public bool? IsPaid { get; set; }
     }
 }

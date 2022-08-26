@@ -83,7 +83,21 @@ namespace AirlineTicketing.Service {
         /// </summary>
         /// <returns></returns>
         public bool Update([FromBody] User data) {
-            return _userDao.Update(data);
+            // id不能修改，用id获取用户
+            // 或者用username 不准修改用户名
+            var user = GetUserByName(data.Name!);
+            if (user.Id == null) {
+                throw new Exception("用户不存在");
+            }
+            // where条件是id一致
+            // null值不更新，非null值更新
+            return _userDao.Update(it => new User() {
+                Amount = data.Amount ?? it.Amount,
+                Name = data.Name ?? it.Name,
+                PassengerId = data.PassengerId ?? it.PassengerId,
+                Password = Password.EncryptPassword(data.Password) ?? it.Password,
+                PhoneNumber = data.PhoneNumber ?? it.PhoneNumber
+            }, it => it.Name!.Equals(user.Name!));
         }
 
         public IEnumerable<User> GetUserByNames(List<string> names) {
