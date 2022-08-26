@@ -2,23 +2,27 @@ const routes = [
     {
         name: 'Login',
         path: '/login',
+        meta: {keepAlive: false},
         component: () => import('@/view/LoginRegister.vue')
     },
 
     {
         name: 'TicketInquiry',
         path: '/TicketInquiry',
+        meta: {keepAlive: true},
         component: () => import('@/view/TicketInquiry.vue')
     },
     {
         name: 'FrontPage',
         path: '/',
+        meta: {keepAlive: true},
         component: () => import('@/view/FrontPage.vue')
     },
 
     {
         name: 'Myspace',
         path: '/myspace',
+        meta: {keepAlive: true},
         component: () => import('@/view/Myspace.vue'),
         children:[
         {
@@ -46,6 +50,17 @@ const routes = [
             name: 'message',
             component: () => import('@/view/myspace/message.vue')
         },
+        {
+            path: '/myspace/recharge',
+            name: 'recharge',
+            component: () => import('@/view/myspace/recharge.vue')
+          },
+          {
+            path: '/myspace/passenger',
+            name: 'passenger',
+            component: () => import('@/view/myspace/passenger.vue')
+          },
+          
         ]
         
     },
