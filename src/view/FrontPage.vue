@@ -1,54 +1,78 @@
 <template>
   <div class="background">
     <div class="buttonrow">
+      欢迎您，{{ Username }}! 这地方到时候是不是顶部栏
       <router-link to="/Myspace" class="toSpace">
-        <el-button> 个人中心 </el-button>
+        <el-button> 个人中心</el-button>
       </router-link>
     </div>
     <!--  -->
+    <div class="search-form">
+      <!-- 起始地选择 -->
+      <div class="form-line">
+        <div class="flt-box">
+          <!-- 起点 -->
+          <div class="flt-depart">
+            <span>出发地</span>
+            <div class="select-box">
+              <el-select v-model="departure" placeholder="请选择出发地">
+                <el-option
+                  v-for="item in options"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
+            </div>
+          </div>
+          <!-- 交换按钮 -->
+          <div>
+            <el-icon class="switch-button" size="large"> <Refresh /></el-icon>
+          </div>
+          <!-- 终点 -->
+          <div class="flt-arrival">
+            <span>目的地</span>
+            <div class="select-box">
+              <el-select v-model="destination" placeholder="请选择目的地">
+                <el-option
+                  v-for="item in options"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
+            </div>
+          </div>
+        </div>
+        <div class="date-box">
+          <span>出发日期</span>
+          <div class="date-picker">
+            <el-date-picker
+              v-model="depDate"
+              type="date"
+              placeholder="选择出发日期"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--  -->
     <div>
-      <h1 class="title">欢迎使用机票订购系统</h1>
+      <router-link to="/TicketInquiry" class="search">
+        <el-button class="search-button" @click="search"> 搜索</el-button>
+        <svg
+          viewBox="0 0 1024 1024"
+          xmlns="http://www.w3.org/2000/svg"
+          data-v-ba633cb8=""
+        >
+          <path
+            fill="currentColor"
+            d="m795.904 750.72 124.992 124.928a32 32 0 0 1-45.248 45.248L750.656 795.904a416 416 0 1 1 45.248-45.248zM480 832a352 352 0 1 0 0-704 352 352 0 0 0 0 704z"
+          ></path>
+        </svg>
+      </router-link>
     </div>
-
-    <div class="main">
-      <el-form label-width="120px" ref="TicketInquiry">
-        <!-- 地点输入 -->
-        <el-row>
-          <el-col span="5">
-            <el-form-item label="起始地">
-              <el-input
-                v-model="departure"
-                size="large"
-                placeholder="请输入起始地,例如：上海市"
-                class="input"
-                :departure="departure"
-              />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col span="5">
-            <el-form-item label="目的地">
-              <el-input
-                v-model="destination"
-                size="large"
-                placeholder="请输入目的地，例如：北京市"
-                class="input"
-                :destination="destination"
-              />
-            </el-form-item>
-          </el-col>
-          <el-col span="5">
-            <router-link to="/TicketInquiry" class="search">
-              <el-button type="primary" size="large" @click="toInquiry"
-                >搜索</el-button
-              >
-            </router-link>
-          </el-col>
-        </el-row>
-        <!-- 地点输入结束 -->
-      </el-form>
-    </div>
+    <!--  -->
   </div>
 </template>
 
@@ -63,9 +87,27 @@ export default {
   components: { TicketInquiry },
   data() {
     return {
-      departure: "1",
-      destination: "2",
+      departure: "",
+      destination: "",
+      Username: "user",
+      depDate: "",
+      options: [
+        {
+          value: "HRB",
+          label: "哈尔滨(HRB)",
+        },
+      ],
     };
+  },
+
+  methods: {
+    exchange() {
+      //报错？？
+      // let temp = '';
+      // temp=this.departure;
+      // this.departure=this.destination;
+      // this.destination=temp;
+    },
   },
 };
 
@@ -92,23 +134,23 @@ export default {
 
 <style scoped>
 .background {
-  background-color: aqua;
-  position: absolute;
+  /* background-color: aqua; */
   width: 100%;
   height: 100%;
-  background-image: url("../assets/img/Front.jpg");
   background-size: cover;
+  background: linear-gradient(to bottom, rgb(192, 255, 255), white);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  align-items: center;
 }
 
 .buttonrow {
   margin-right: 50px;
   margin-top: 20px;
   text-align: right;
-}
-
-.main {
-  margin-left: 420px;
-  margin-top: 60px;
+  font-size: 20px;
 }
 
 .title {
@@ -117,18 +159,154 @@ export default {
   font-size: 50px;
 }
 
-.search {
-  margin-left: 35px;
-  text-decoration: none;
-}
-
-/* 输入框 */
-.input {
-  width: 350px;
-}
-
-.toSpace{
+.toSpace {
   text-align: right;
   text-decoration: none;
+}
+
+/*===*/
+/* 搜索框布局 */
+.search-form {
+  /* flex布局 */
+  margin-top: 250px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  width: 800px;
+  height: 100%;
+  background: transparent;
+  padding: 10px 5% 80px 5%;
+  border-radius: 6px;
+}
+
+/* 整个大搜索框 */
+.form-line {
+  display: flex;
+  /* 横向排布 */
+  flex-direction: row;
+  justify-content: space-between;
+  /* 相对定位 */
+  position: relative;
+  background-color: #ffffff;
+  height: 150%;
+  width: 1200px;
+  border: 1px solid #eee;
+  box-shadow: 0 0 12px 0 rgb(0 0 0 / 6%);
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+/* 出发-目的 */
+.flt-box {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  position: relative;
+  border-radius: 6px;
+  border: 1px solid #eee;
+  box-shadow: 0 0 12px 0 rgb(0 0 0 / 6%);
+}
+
+/* 悬浮 */
+.flt-box:hover {
+  box-shadow: 0 0 12px 0 rgb(0 0 0 / 10%);
+}
+
+/* 出发目的框的出发框 */
+.flt-depart {
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid, #eee;
+}
+
+/* 蓝底小字 */
+.flt-depart span {
+  color: #3187f9;
+  font-size: 20px;
+  margin: 10px 0px 4px 15px;
+}
+
+.flt-arrival {
+  display: flex;
+  flex-direction: column;
+  left: 30px;
+}
+
+.flt-arrival span {
+  color: #3187f9;
+  font-size: 20px;
+  margin: 10px 0px 4px 13px;
+}
+
+/* 交换按钮 */
+.switch-button {
+  position: relative;
+  border: 1px solid;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  top: 15px;
+  left: -40px;
+  cursor: pointer;
+  background-color: #fff;
+}
+
+.select-box {
+  margin: 10px 10px 10px 10px;
+  width: 300px;
+}
+
+.date-box {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid;
+  border-radius: 6px;
+  width: 240px;
+  border: 1px solid #eee;
+  box-shadow: 0 0 12px 0 rgb(0 0 0 / 6%);
+}
+.date-box:hover {
+  box-shadow: 0 0 12px 0 rgb(0 0 0 / 10%);
+}
+
+.date-box span {
+  color: #3187f9;
+  font-size: 20px;
+  margin: 10px 0px 4px 13px;
+}
+
+.date-picker {
+  margin: 10px 10px 10px 10px;
+  width: 300px;
+}
+
+.search {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  text-decoration:none
+}
+
+.search-button {
+  border-radius: 28px;
+  height: 50px;
+  width: 500px;
+  padding-left: 30px;
+  font-size: 25px;
+  background-color: rgb(0, 0, 0);
+  background-image: linear-gradient(-90deg, rgb(175, 252, 255), #b0daf6);
+}
+
+.search svg {
+  position: absolute;
+  left: 10%;
+  top: 45%;
+  transform: translateY(-50%);
+  height: 30px;
+  width: 30px;
+  color: #fff;
 }
 </style>
