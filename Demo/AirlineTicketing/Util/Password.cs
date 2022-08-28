@@ -1,6 +1,6 @@
 ﻿using System.Security.Cryptography;
 
-namespace AirlineTicketing.Util; 
+namespace AirlineTicketing.Util;
 
 public static class Password {
     /// <summary>
@@ -8,7 +8,11 @@ public static class Password {
     /// </summary>
     /// <param name="passWord">明文密码</param>
     /// <returns>加密后的密码</returns>
-    public static string EncryptPassword(string passWord) {
+    public static string? EncryptPassword(string? passWord) {
+        if (passWord == null) {
+            return null;
+        }
+
         var sha256 = SHA256.Create();
         var hash = sha256.ComputeHash(System.Text.Encoding.Unicode.GetBytes(passWord));
         var res = Convert.ToHexString(hash);

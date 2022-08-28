@@ -17,7 +17,7 @@ public class UserAddTest {
     [Fact]
     public void UserAdd() {
         var currentCount = _userService.GetUserCount();
-        var testCount = 500;
+        var testCount = 500;   
         for (var i = currentCount; i < testCount + currentCount; i++) {
             var userName = "test";
             var passWord = "password";
@@ -35,7 +35,8 @@ public class UserAddTest {
                 Name = userName,
                 Password = Convert.ToHexString(sha256.ComputeHash(System.Text.Encoding.Unicode.GetBytes(passWord))),
                 PhoneNumber = phoneNumber,
-                PassengerId = passengerId
+                PassengerId = passengerId,
+                Amount = 10000
             };
             _userService.Add(newUser);
         }
