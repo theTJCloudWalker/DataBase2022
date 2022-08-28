@@ -15,9 +15,14 @@
           <div class="flt-depart">
             <span>出发地</span>
             <div class="select-box">
-              <el-select v-model="departure" placeholder="请选择出发地">
+              <el-select
+                v-model="departure"
+                placeholder="请选择出发地"
+                filterable
+                @click="setCacheDep"
+              >
                 <el-option
-                  v-for="item in options"
+                  v-for="item in cities"
                   :key="item.value"
                   :label="item.label"
                   :value="item.value"
@@ -27,15 +32,22 @@
           </div>
           <!-- 交换按钮 -->
           <div>
-            <el-icon class="switch-button" size="large"> <Refresh /></el-icon>
+            <el-icon class="switch-button" size="large" @click="exchange">
+              <Refresh
+            /></el-icon>
           </div>
           <!-- 终点 -->
           <div class="flt-arrival">
             <span>目的地</span>
             <div class="select-box">
-              <el-select v-model="destination" placeholder="请选择目的地">
+              <el-select
+                v-model="destination"
+                placeholder="请选择目的地"
+                filterable
+                @click="setCacheDes"
+              >
                 <el-option
-                  v-for="item in options"
+                  v-for="item in cities"
                   :key="item.value"
                   :label="item.label"
                   :value="item.value"
@@ -44,6 +56,7 @@
             </div>
           </div>
         </div>
+        <!-- 选择日期 -->
         <div class="date-box">
           <span>出发日期</span>
           <div class="date-picker">
@@ -51,6 +64,7 @@
               v-model="depDate"
               type="date"
               placeholder="选择出发日期"
+              :disabled-date="disabledDate"
             />
           </div>
         </div>
@@ -76,7 +90,7 @@
   </div>
 </template>
 
-<script lang="ts">
+<script>
 //import { defineComponent } from '@vue/composition-api'
 import { ref } from "vue";
 import TicketInquiry from "./TicketInquiry.vue";
@@ -87,14 +101,26 @@ export default {
   components: { TicketInquiry },
   data() {
     return {
-      departure: "",
-      destination: "",
+      cacheDep: "", //缓存上一个填入的地点，用来处理同地点
+      cacheDes: "",
+      departure: "上海",
+      destination: "哈尔滨",
       Username: "user",
       depDate: "",
-      options: [
+      disabledDate: "",
+
+      disabledDate(time) { //函数，禁用日期
+      return time.getTime() < Date.now() - 8.64e7 ;
+    },
+
+      cities: [
         {
-          value: "HRB",
+          value: "哈尔滨",
           label: "哈尔滨(HRB)",
+        },
+        {
+          value: "上海",
+          label: "上海(HRB)",
         },
       ],
     };
@@ -102,34 +128,50 @@ export default {
 
   methods: {
     exchange() {
-      //报错？？
-      // let temp = '';
-      // temp=this.departure;
-      // this.departure=this.destination;
-      // this.destination=temp;
+      //交换函数
+      let temp = "";
+      temp = this.departure;
+      this.departure = this.destination;
+      this.destination = temp;
+      //console.log(this.departure,this.destination,this.cacheDep,this.cacheDes);
+      //console.log(this.depDate);
     },
+    setCacheDep() {
+      //设置缓冲下同
+      this.cacheDep = this.departure;
+    },
+    setCacheDes() {
+      this.cacheDes = this.destination;
+    },
+    search()
+    {
+      console.log("带值跳转，不知道如何实现");
+    }
+  },
+
+  watch: {
+    departure() {
+      //监视器，监视相同时交换
+      if (this.departure === this.destination) {
+        this.departure = this.cacheDep;
+        this.exchange();
+      }
+    },
+    destination() {
+      //监视器，监视相同时交换
+      if (this.departure === this.destination) {
+        this.destination = this.cacheDes;
+        this.exchange();
+      }
+    },
+    
+  },
+
+  mounted() {
+    this.depDate = new Date();
+    //console.log(this.depDate);
   },
 };
-
-// methods:{
-//   toInquiry(){
-//     this.$router.push(
-//       {
-//           path:'/TicketInquiry',
-//           query:{
-//             des:this.destination,
-//             dep:this.departure
-//           }
-//       }
-//     )
-//   }
-
-// data() {
-//   return {
-//     departure: "",
-//     destination: "",
-//   };
-// },
 </script>
 
 <style scoped>
@@ -287,7 +329,7 @@ export default {
   top: 100%;
   left: 50%;
   transform: translateX(-50%) translateY(-50%);
-  text-decoration:none
+  text-decoration: none;
 }
 
 .search-button {
