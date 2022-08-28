@@ -15,7 +15,11 @@ const routes = [
         path: '/',
         component: () => import('@/view/FrontPage.vue')
     },
-
+    {
+        name: 'OrderPage',
+        path: '/order',
+        component: () => import('@/view/OrderPage.vue')
+    },
     {
         name: 'Myspace',
         path: '/myspace',
