@@ -17,9 +17,14 @@
             <div class="flt-depart">
               <span>出发地</span>
               <div class="select-box">
-                <el-select v-model="departure" placeholder="请选择出发地">
+                <el-select
+                  v-model="form.dep"
+                  placeholder="请选择出发地"
+                  filterable
+                  @click="setCacheDep"
+                >
                   <el-option
-                    v-for="item in options"
+                    v-for="item in cities"
                     :key="item.value"
                     :label="item.label"
                     :value="item.value"
@@ -29,15 +34,22 @@
             </div>
             <!-- 交换按钮 -->
             <div>
-              <el-icon class="switch-button" size="large"> <Refresh /></el-icon>
+              <el-icon class="switch-button" size="large" @click="exchange">
+                <Refresh
+              /></el-icon>
             </div>
             <!-- 终点 -->
             <div class="flt-arrival">
               <span>目的地</span>
               <div class="select-box">
-                <el-select v-model="destination" placeholder="请选择目的地">
+                <el-select
+                  v-model="form.des"
+                  placeholder="请选择目的地"
+                  filterable
+                  @click="setCacheDes"
+                >
                   <el-option
-                    v-for="item in options"
+                    v-for="item in cities"
                     :key="item.value"
                     :label="item.label"
                     :value="item.value"
@@ -51,7 +63,7 @@
             <span>出发日期</span>
             <div class="date-picker">
               <el-date-picker
-                v-model="depDate"
+                v-model="form.depDate"
                 type="date"
                 placeholder="选择出发日期"
               />
@@ -64,9 +76,9 @@
             <el-form-item>
               <el-radio-group v-model="form.pass">
                 <span>请选择航程类别</span>
-                <el-radio label="1" size="large">单程</el-radio>
-                <el-radio label="2" size="large">往返</el-radio>
-                <el-radio label="3" size="large">多程</el-radio>
+                <el-radio :label="1" size="large">单程</el-radio>
+                <el-radio :label="2" size="large">往返</el-radio>
+                <el-radio :label="3" size="large">多程</el-radio>
               </el-radio-group>
             </el-form-item>
           </div>
@@ -76,9 +88,9 @@
               <div>
                 <el-radio-group v-model="form.cabin">
                   <span>请选择机舱类别</span>
-                  <el-radio label="1" size="large">经济舱</el-radio>
-                  <el-radio label="2" size="large">公务舱</el-radio>
-                  <el-radio label="3" size="large">头等舱</el-radio>
+                  <el-radio :label="1" size="large">经济舱</el-radio>
+                  <el-radio :label="2" size="large">公务舱</el-radio>
+                  <el-radio :label="3" size="large">头等舱</el-radio>
                 </el-radio-group>
               </div>
             </el-form-item>
@@ -108,7 +120,8 @@
     <!-- 展示搜索结果 -->
     <div class="resultDIV">
       <div class="searchResult">
-        <br /><br /><p>搜索结果:</p>
+        <br /><br />
+        <p>搜索结果:</p>
         <el-table
           :data="flightTable"
           height="250"
@@ -118,6 +131,7 @@
           @current-change="handleCurrentChange"
         >
           <el-table-column prop="date" label="日期" width="200" />
+          <el-table-column prop="company" label="航空公司" width="200" />
           <el-table-column prop="flight" label="航班" width="150" />
           <el-table-column prop="departureSearch" label="起始地" width="100" />
           <el-table-column
@@ -165,22 +179,34 @@ export default {
 
   data() {
     return {
+      cacheDep: "", //缓存上一个填入的地点，用来处理同地点
+      cacheDes: "",
       /*======表单数据======*/
       form: {
-        dep: this.departure, //出发日期
-        des: this.destination, //目的地日期
+        dep: this.departure, //出发
+        des: this.destination, //目的地
         // dep:this.departure,
         // des:this.destination,
-        pass: 0, //行程类别
-        cabin: 0, //舱类
-        value1: "",
+        pass: 1, //行程类别
+        cabin: 1, //舱类
+        depDate: "",
       },
       /*============*/
-
+      cities: [
+        {
+          value: "哈尔滨",
+          label: "哈尔滨(HRB)",
+        },
+        {
+          value: "上海",
+          label: "上海(HRB)",
+        },
+      ],
       /*====应该从后端获得的数据=====*/
       flightTable: [
         {
           flight: "MU6060",
+          company: "东方航空",
           date: "2016-05-03",
           departureSearch: "上海市",
           destinationSearch: "北京市",
@@ -191,6 +217,7 @@ export default {
         },
         {
           flight: "MU7060",
+          company: "东方航空",
           date: "2016-05-03",
           departureSearch: "上海市",
           destinationSearch: "北京市",
@@ -201,6 +228,7 @@ export default {
         },
         {
           flight: "MU7060",
+          company: "春秋航空",
           date: "2016-05-03",
           departureSearch: "上海市",
           destinationSearch: "北京市",
@@ -234,14 +262,54 @@ export default {
   },
 
   methods: {
+    /*===========工具函数============*/
+    exchange() {
+      //交换函数
+      let temp = "";
+      temp = this.form.dep;
+      this.form.dep = this.form.des;
+      this.form.des = temp;
+      console.log(this.form.pass);
+    },
+    setCacheDep() {
+      //设置缓冲下同
+      this.cacheDep = this.form.dep;
+    },
+    setCacheDes() {
+      this.cacheDes = this.form.des;
+    },
+    /*====================================*/
+
     /*======该方法是：通过点击按钮，向后端发送数据，然后返回得到的数据===*/
     ticketInquiry() {
       // ctx.$axios.post("url", );
       // console.log(this.departure);
     },
 
-    //支付函数，可能要有支付页面 但是如何获取要支付的航班次的数据？
-    pay() {},
+    handlePay(x, y) {
+      //跳转到支付订购
+    },
+  },
+
+  watch: {
+    'form.dep'() {
+      //监视器，监视相同时交换
+      if (this.form.dep === this.form.des) {
+        this.form.dep = this.cacheDep;
+        this.exchange();
+      }
+    },
+    'form.des'() {
+      //监视器，监视相同时交换
+      if (this.form.dep === this.form.des) {
+        this.form.des = this.cacheDes;
+        this.exchange();
+      }
+    },
+  },
+
+  mounted() {
+    this.form.depDate = new Date();
   },
 
   /*=====数据、方法======*/
@@ -329,19 +397,19 @@ export default {
 .searchResult {
   margin-left: 55px;
   margin-right: 55px;
-  margin-top:-50px;
+  margin-top: -50px;
   border: rgb(238, 169, 169);
   border-width: 1px;
   background-color: rgb(250, 250, 250);
   padding-bottom: 85px;
 }
 
-.searchResult p{
-  font-size:20px;
-  top:-20px;
+.searchResult p {
+  font-size: 20px;
+  top: -20px;
 }
 
-.resultDIV{
+.resultDIV {
   background-color: rgb(250, 250, 250);
 }
 
@@ -510,7 +578,7 @@ export default {
 .search {
   position: relative;
   top: 50%;
-  left:70%;
+  left: 70%;
   transform: translateX(-50%) translateY(-50%);
   text-decoration: none;
 }
