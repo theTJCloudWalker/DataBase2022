@@ -97,7 +97,7 @@
           </div>
           <!--  -->
           <div>
-            <router-link to="" class="search">
+            <div class="search">
               <el-button class="search-button" @click="search"> 搜索</el-button>
               <svg
                 viewBox="0 0 1024 1024"
@@ -109,7 +109,7 @@
                   d="m795.904 750.72 124.992 124.928a32 32 0 0 1-45.248 45.248L750.656 795.904a416 416 0 1 1 45.248-45.248zM480 832a352 352 0 1 0 0-704 352 352 0 0 0 0 704z"
                 ></path>
               </svg>
-            </router-link>
+            </div>
           </div>
           <!--  -->
         </div>
@@ -153,7 +153,7 @@
           <el-table-column prop="price" label="价格" width="100" />
           <el-table-column>
             <template #default="scope">
-              <router-link to="/order" class="search">
+              <router-link to="/order" class='pay'>
                 <el-button
                   size="small"
                   type="primary"
@@ -185,10 +185,9 @@ export default {
       cacheDes: "",
       /*======表单数据======*/
       form: {
-        dep: this.departure, //出发
-        des: this.destination, //目的地
-        // dep:this.departure,
-        // des:this.destination,
+        dep: this.$route.query.departure,
+        des: this.$route.query.destination,
+        // des:this.$route.query.routeSearch(destination),
         pass: 1, //行程类别
         cabin: 1, //舱类
         depDate: "",
@@ -312,6 +311,7 @@ export default {
 
   mounted() {
     this.form.depDate = new Date();
+    // this.dep = this.$route.query.routeSearch(departure);
   },
 
   /*=====数据、方法======*/
@@ -362,7 +362,7 @@ export default {
 }
 
 .form-container {
-  width: 100%;
+  width: 1520px;
   height: 100%;
   background-size: cover;
   position: relative;
@@ -412,6 +412,7 @@ export default {
 }
 
 .resultDIV {
+  width:1520px;
   background-color: rgb(250, 250, 250);
 }
 
@@ -579,8 +580,8 @@ export default {
 
 .search {
   position: relative;
-  top: 50%;
-  left: 70%;
+  top: 100%;
+  left: 120%;
   transform: translateX(-50%) translateY(-50%);
   text-decoration: none;
 }
@@ -605,5 +606,8 @@ export default {
   color: #fff;
 }
 
+.pay{
+  text-decoration: none;
+}
 /*===*/
 </style>

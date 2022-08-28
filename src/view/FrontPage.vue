@@ -72,7 +72,8 @@
     </div>
     <!--  -->
     <div>
-      <router-link to="/TicketInquiry" class="search">
+      <!-- <router-link to="/TicketInquiry" class="search"> -->
+      <div class="search">
         <el-button class="search-button" @click="search"> 搜索</el-button>
         <svg
           viewBox="0 0 1024 1024"
@@ -84,7 +85,8 @@
             d="m795.904 750.72 124.992 124.928a32 32 0 0 1-45.248 45.248L750.656 795.904a416 416 0 1 1 45.248-45.248zM480 832a352 352 0 1 0 0-704 352 352 0 0 0 0 704z"
           ></path>
         </svg>
-      </router-link>
+      </div>
+      <!-- </router-link> -->
     </div>
     <!--  -->
   </div>
@@ -109,9 +111,10 @@ export default {
       depDate: "",
       disabledDate: "",
 
-      disabledDate(time) { //函数，禁用日期
-      return time.getTime() < Date.now() - 8.64e7 ;
-    },
+      disabledDate(time) {
+        //函数，禁用日期
+        return time.getTime() < Date.now() - 8.64e7;
+      },
 
       cities: [
         {
@@ -143,10 +146,19 @@ export default {
     setCacheDes() {
       this.cacheDes = this.destination;
     },
-    search()
-    {
+    search() {
       console.log("带值跳转，不知道如何实现");
-    }
+      this.$router.push({
+        path: "/TicketInquiry",
+        //这里传的是一个对象
+        query: {
+          name:'routeSearch',
+          departure: this.departure,
+          destination: this.destination,
+          depDate: this.depDate,
+        },
+      });
+    },
   },
 
   watch: {
@@ -164,7 +176,6 @@ export default {
         this.exchange();
       }
     },
-    
   },
 
   mounted() {
@@ -177,7 +188,7 @@ export default {
 <style scoped>
 .background {
   /* background-color: aqua; */
-  width: 100%;
+  width: 1537px;
   height: 100%;
   background-size: cover;
   background: linear-gradient(to bottom, rgb(192, 255, 255), white);
@@ -186,6 +197,8 @@ export default {
   flex-direction: column;
   position: relative;
   align-items: center;
+  left: -10px;
+  top: -10px;
 }
 
 .buttonrow {
