@@ -153,12 +153,14 @@
           <el-table-column prop="price" label="价格" width="100" />
           <el-table-column>
             <template #default="scope">
-              <el-button
-                size="small"
-                type="primary"
-                @click="handlePay(scope.$index, scope.row)"
-                >订购</el-button
-              >
+              <router-link to="/order" class="search">
+                <el-button
+                  size="small"
+                  type="primary"
+                  @click="handlePay(scope.$index, scope.row)"
+                  >订购</el-button
+                >
+              </router-link>
             </template>
           </el-table-column>
         </el-table>
@@ -292,14 +294,14 @@ export default {
   },
 
   watch: {
-    'form.dep'() {
+    "form.dep"() {
       //监视器，监视相同时交换
       if (this.form.dep === this.form.des) {
         this.form.dep = this.cacheDep;
         this.exchange();
       }
     },
-    'form.des'() {
+    "form.des"() {
       //监视器，监视相同时交换
       if (this.form.dep === this.form.des) {
         this.form.des = this.cacheDes;
