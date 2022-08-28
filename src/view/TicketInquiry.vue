@@ -2,9 +2,6 @@
   <div>
     <!-- **====================** -->
     <div class="topBar">
-      <router-link to="/" class="topButton">
-        <el-button>首页</el-button>
-      </router-link>
     </div>
     <!-- **====================** -->
     <div class="form-container">
