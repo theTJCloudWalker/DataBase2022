@@ -6,8 +6,16 @@
     />
     </router-link>
     <el-container style="height: 700px; border: 10px solid #eee">
-      <el-aside  width="150px" style="background-color: white">
-        <el-menu :default-openeds="['1']">
+      <el-aside  
+        width="150px"
+        style="background-color: #545c64"  
+      >
+        <el-menu 
+          :default-openeds="['1']"
+          background-color="#545c64"
+          text-color="#fff"
+          active-text-color="#ffd04b"
+        >
 
           <el-submenu index="1">
             <template slot="title">

@@ -4,7 +4,7 @@ const routes = [
         path: '/login',
         component: () => import('@/view/LoginRegister.vue')
     },
- 
+
     {
         name: 'TicketInquiry',
         path: '/TicketInquiry',
