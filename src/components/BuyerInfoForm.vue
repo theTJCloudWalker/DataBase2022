@@ -1,5 +1,5 @@
 <template>
-<el-form :model="BuyerInfo" label-width="120px">
+<el-form :model="BuyerInfo" label-width="120px" style="max-width: 460px">
     <el-form-item label="联系人姓名">
         <el-input v-model="BuyerInfo.BuyerName" />
     </el-form-item>
