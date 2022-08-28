@@ -30,3 +30,4 @@ SHIT2022年数据库课程设计
 - vue3(创建脚手架时包含ts，router)
 - element-plus
 - axios（使用命令：npm install axios --save）
+- 添加图标库 (npm install @element-plus/icons-vue)

@@ -52,14 +52,12 @@ export default{
   name:"LoginRegister",
   components:{LoginForm,RegisterForm},
   data(){
-    
     return{
       loginState:'block',
       registerState:'none'
     }
   },
   methods:{
-    
     modifyState(mode) {
       //在点击事件后延迟执行隐藏
       //通过修改两个div的display状态以实现表单框消失的效果

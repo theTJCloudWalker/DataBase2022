@@ -18,7 +18,11 @@ const routes = [
         meta: {keepAlive: true},
         component: () => import('@/view/FrontPage.vue')
     },
-
+    {
+        name: 'OrderPage',
+        path: '/order',
+        component: () => import('@/view/OrderPage.vue')
+    },
     {
         name: 'Myspace',
         path: '/myspace',
@@ -50,17 +54,22 @@ const routes = [
             name: 'message',
             component: () => import('@/view/myspace/message.vue')
         },
-        {
+
+        {   
             path: '/myspace/recharge',
             name: 'recharge',
             component: () => import('@/view/myspace/recharge.vue')
-          },
-          {
+         },
+        {
             path: '/myspace/passenger',
             name: 'passenger',
             component: () => import('@/view/myspace/passenger.vue')
-          },
-          
+        },
+        {
+            path: '/myspace/myorder',
+            name: 'myorder',
+            component: () => import('@/view/myspace/myorder.vue')
+        },
         ]
         
     },
