@@ -50,14 +50,15 @@ const routes = [
             name: 'message',
             component: () => import('@/view/myspace/message.vue')
         },
-        {   path: '/myspace/recharge',
+        {   
+            path: '/myspace/recharge',
             name: 'recharge',
             component: () => import('@/view/myspace/recharge.vue')
          },
         {
-        path: '/myspace/passenger',
-        name: 'passenger',
-        component: () => import('@/view/myspace/passenger.vue')
+            path: '/myspace/passenger',
+            name: 'passenger',
+            component: () => import('@/view/myspace/passenger.vue')
         },
         {
             path: '/myspace/myorder',
