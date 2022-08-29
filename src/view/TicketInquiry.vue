@@ -123,13 +123,62 @@
         <el-table
           :data="flightTable"
           height="250"
-          width="1200"
+          width="1500"
           ref="singleTableRef"
           highlight-current-row
           @current-change="handleCurrentChange"
-          @mouseover="showinfo(scope.$index, scope.row)"
         >
-          <el-table-column prop="date" label="日期" width="200" />
+          <el-table-column width="1500px">
+            <template #default="scope">
+              <div class="flight-box">
+                <!-- ========航空公司====== -->
+                <div class="flight-company">
+                  <div>
+                    <h3>{{ flightTable[scope.$index].company }}</h3>
+                  </div>
+                  <span @mouseover="showinfo(scope.$index, scope.row)">
+                    {{ flightTable[scope.$index].flight }}
+                  </span>
+                </div>
+                <!-- ================== -->
+                <!-- =====航班具体显示========= -->
+                <div class="flight-box-name1">
+                  <p>{{ flightTable[scope.$index].depTime }}</p>
+                  <span>{{ flightTable[scope.$index].departureAirplane }}</span>
+                </div>
+                <!--  -->
+                <div class="flight-arrow"></div>
+                <!--  -->
+                <div class="flight-box-name2">
+                  <p>{{ flightTable[scope.$index].desTime }}</p>
+                  <span>{{
+                    flightTable[scope.$index].destinationAirplane
+                  }}</span>
+                </div>
+                <div class="flight-rate">
+                  <span>准点率:{{ flightTable[scope.$index].timeRate }}</span>
+                </div>
+                <div class="flight-price">
+                  <span>¥{{ flightTable[scope.$index].price }}</span>
+                </div>
+                <!--  -->
+                <!-- ============订购按钮=========== -->
+                <div class="pay">
+                  <router-link to="/order" style="text-decoration: none">
+                    <el-button
+                      size="small"
+                      type="primary"
+                      class="pay-button"
+                      @click="handlePay(scope.$index, scope.row)"
+                      >订购</el-button
+                    >
+                  </router-link>
+                </div>
+                <!--  -->
+              </div>
+            </template>
+          </el-table-column>
+          <!--  <el-table-column prop="date" label="日期" width="200" />
           <el-table-column
             prop="company"
             label="航空公司"
@@ -151,7 +200,14 @@
           />
           <el-table-column prop="depTime" label="起飞时间" width="100" />
           <el-table-column prop="price" label="价格" width="100" />
-          <el-table-column>
+          <el-table-column prop="flightTable" label="666" width="100">
+            <template #default="scope">
+              <div>
+                {{ flightTable[scope.$index].flight }}
+              </div>
+            </template>
+          </el-table-column> -->
+          <!-- <el-table-column>
             <template #default="scope">
               <router-link to="/order" class="pay">
                 <el-button
@@ -162,7 +218,7 @@
                 >
               </router-link>
             </template>
-          </el-table-column>
+          </el-table-column> -->
         </el-table>
       </div>
     </div>
@@ -187,10 +243,9 @@ export default {
       form: {
         dep: this.$route.query.departure,
         des: this.$route.query.destination,
-        // des:this.$route.query.routeSearch(destination),
         pass: 1, //行程类别
         cabin: 1, //舱类
-        depDate: "",
+        depDate: this.$route.query.depDate,
       },
       /*============*/
       cities: [
@@ -209,54 +264,29 @@ export default {
           flight: "MU6060",
           company: "东方航空",
           date: "2016-05-03",
-          departureSearch: "上海市",
-          destinationSearch: "北京市",
+          // departureSearch: "上海市",
+          // destinationSearch: "北京市",
           departureAirplane: "虹桥T1",
           destinationAirplane: "天安门",
           depTime: "10:30",
+          desTime: "12:30",
           price: "700",
+          timeRate: "50%",
+          level: 1,
         },
         {
-          flight: "MU7060",
+          flight: "MU6060",
           company: "东方航空",
           date: "2016-05-03",
-          departureSearch: "上海市",
-          destinationSearch: "北京市",
+          // departureSearch: "上海市",
+          // destinationSearch: "北京市",
           departureAirplane: "虹桥T1",
           destinationAirplane: "天安门",
           depTime: "10:30",
+          desTime: "12:30",
           price: "700",
-        },
-        {
-          flight: "MU7060",
-          company: "春秋航空",
-          date: "2016-05-03",
-          departureSearch: "上海市",
-          destinationSearch: "北京市",
-          departureAirplane: "虹桥T1",
-          destinationAirplane: "天安门",
-          depTime: "10:30",
-          price: "700",
-        },
-        {
-          flight: "MU7060",
-          date: "2016-05-03",
-          departureSearch: "上海市",
-          destinationSearch: "北京市",
-          departureAirplane: "虹桥T1",
-          destinationAirplane: "天安门",
-          depTime: "10:30",
-          price: "700",
-        },
-        {
-          flight: "MU7060",
-          date: "2016-05-03",
-          departureSearch: "上海市",
-          destinationSearch: "北京市",
-          departureAirplane: "虹桥T1",
-          destinationAirplane: "天安门",
-          depTime: "10:30",
-          price: "700",
+          timeRate: "50%",
+          level: 1,
         },
       ],
     };
@@ -315,7 +345,6 @@ export default {
   },
 
   mounted() {
-    this.form.depDate = new Date();
     // this.dep = this.$route.query.routeSearch(departure);
   },
 
@@ -428,7 +457,96 @@ export default {
 }
 
 /*==========*/
+/* flight数组 搜索结果框 */
+.flight-box {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  position: relative;
+  /* background-color: #ffffff; */
+  height: 50px;
+  width: 1300px;
+  /* height: 240px; */
+  padding: 10px;
+}
 
+
+.flight-company {
+  margin-top: 5px;
+  margin-left: 40px;
+}
+
+.flight-company h3 {
+  font-size: 20px;
+  margin-top: -10px;
+}
+
+.flight-company span {
+  display: block;
+  font-size: 15px;
+  color: #3187f9;
+  margin-top: -5px;
+}
+
+.flight-box-name1 p {
+  font-size: 25px;
+  font-weight: bold;
+  margin-top: -5px;
+}
+
+.flight-box-name1 span {
+  display: block;
+  margin-top: -10px;
+  text-align: center;
+}
+
+.flight-arrow {
+  background: #eee;
+  margin: 20px -100px 20px -100px;
+  padding: 0px 150px 0px 150px;
+  border-top-right-radius: 15px;
+}
+
+.flight-box-name2 p {
+  font-size: 25px;
+  font-weight: bold;
+  margin-top: -5px;
+}
+
+.flight-box-name2 span {
+  display: block;
+  margin-top: -10px;
+  text-align: center;
+}
+
+.flight-rate {
+  color: #3187f9;
+  text-align: center;
+  margin: 10px 30px;
+}
+
+.flight-price {
+  font-size: 20px;
+  font-weight: bold;
+  color: #3187f9;
+  text-align: center;
+  margin: 10px;
+}
+
+.pay {
+  margin-top: 5px;
+  text-decoration: none;
+}
+
+.pay-button{
+  height: 40px;
+  width:100px;
+  font-weight: bold;
+  font-size: 18px;
+  background-color: rgb(255, 174, 0);
+  background-image: linear-gradient(-90deg, rgb(0, 187, 255), #007ed2);
+  size:20px;
+}
 /*===*/
 /* 搜索框布局 */
 .search-form {
@@ -612,8 +730,5 @@ export default {
   color: #fff;
 }
 
-.pay {
-  text-decoration: none;
-}
 /*===*/
 </style>
