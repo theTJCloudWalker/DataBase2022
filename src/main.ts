@@ -7,6 +7,7 @@ import store from './store'
 import axios from './http'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 
+
 const app = createApp(App)
 app.config.globalProperties.$axios=axios;
 app.use(store)

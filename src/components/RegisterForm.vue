@@ -55,6 +55,7 @@
 
 <script lang="ts">
 import { ref, getCurrentInstance } from "vue";
+import  {useStore} from "vuex"
 // import axios from 'axios' // 仅限在当前组件使用
 export default {
   props: {
@@ -70,7 +71,7 @@ export default {
   setup() {
     // @ts-ignore
     const { ctx } = getCurrentInstance();
-
+    const store=useStore();
 
     //注册按钮响应函数
     const handleRegister = (formName: string) => {
@@ -79,6 +80,7 @@ export default {
           alert("submit!");
         } else {
           console.log("error submit!!");
+          console.log(store.state.userId);
           return false;
         }
       });
