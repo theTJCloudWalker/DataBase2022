@@ -123,12 +123,12 @@
         <el-table
           :data="flightTable"
           height="250"
-          width="1500"
+          width="1350"
           ref="singleTableRef"
           highlight-current-row
           @current-change="handleCurrentChange"
         >
-          <el-table-column width="1500px">
+          <el-table-column width="1405px">
             <template #default="scope">
               <div class="flight-box">
                 <!-- ========航空公司====== -->
@@ -464,10 +464,11 @@ export default {
   justify-content: space-between;
   position: relative;
   /* background-color: #ffffff; */
-  height: 50px;
+  height: 60px;
   width: 1300px;
   /* height: 240px; */
   padding: 10px;
+  margin-left:30px;
 }
 
 
@@ -485,7 +486,7 @@ export default {
   display: block;
   font-size: 15px;
   color: #3187f9;
-  margin-top: -5px;
+  margin-top: -10px;
 }
 
 .flight-box-name1 p {
@@ -496,14 +497,14 @@ export default {
 
 .flight-box-name1 span {
   display: block;
-  margin-top: -10px;
+  margin-top: -15px;
   text-align: center;
 }
 
 .flight-arrow {
   background: #eee;
-  margin: 20px -100px 20px -100px;
-  padding: 0px 150px 0px 150px;
+  margin: 15px -100px 15px -100px;
+  padding: 0px 100px 0px 100px;
   border-top-right-radius: 15px;
 }
 
@@ -515,7 +516,7 @@ export default {
 
 .flight-box-name2 span {
   display: block;
-  margin-top: -10px;
+  margin-top: -15px;
   text-align: center;
 }
 
@@ -535,6 +536,7 @@ export default {
 
 .pay {
   margin-top: 5px;
+  margin-right: 40px;
   text-decoration: none;
 }
 
