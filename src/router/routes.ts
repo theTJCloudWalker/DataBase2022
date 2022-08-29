@@ -21,6 +21,7 @@ const routes = [
     {
         name: 'OrderPage',
         path: '/order',
+        meta: {keepAlive: true},
         component: () => import('@/view/OrderPage.vue')
     },
     {
