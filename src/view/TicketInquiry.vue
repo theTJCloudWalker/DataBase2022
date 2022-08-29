@@ -1,8 +1,7 @@
 <template>
   <div>
     <!-- **====================** -->
-    <div class="topBar">
-    </div>
+    <div class="topBar"></div>
     <!-- **====================** -->
     <div class="form-container">
       <el-form label-width="120px" ref="TicketInquiry" :model="form">
@@ -95,7 +94,9 @@
           <!--  -->
           <div>
             <div class="search">
-              <el-button class="search-button" @click="search"> 搜索</el-button>
+              <el-button class="search-button" @click="ticketInquiry()">
+                搜索</el-button
+              >
               <svg
                 viewBox="0 0 1024 1024"
                 xmlns="http://www.w3.org/2000/svg"
@@ -126,19 +127,21 @@
           ref="singleTableRef"
           highlight-current-row
           @current-change="handleCurrentChange"
+          @mouseover="showinfo(scope.$index, scope.row)"
         >
           <el-table-column prop="date" label="日期" width="200" />
-          <el-table-column prop="company" label="航空公司" width="200" />
+          <el-table-column
+            prop="company"
+            label="航空公司"
+            width="200"
+            #default="scope"
+            @mouseover="showinfo(scope.$index, scope.row)"
+          >
+          </el-table-column>
           <el-table-column prop="flight" label="航班" width="150" />
-          <el-table-column prop="departureSearch" label="起始地" width="100" />
           <el-table-column
             prop="departureAirplane"
             label="起飞机场"
-            width="100"
-          />
-          <el-table-column
-            prop="destinationSearch"
-            label="目的地"
             width="100"
           />
           <el-table-column
@@ -150,7 +153,7 @@
           <el-table-column prop="price" label="价格" width="100" />
           <el-table-column>
             <template #default="scope">
-              <router-link to="/order" class='pay'>
+              <router-link to="/order" class="pay">
                 <el-button
                   size="small"
                   type="primary"
@@ -260,7 +263,6 @@ export default {
   },
 
   methods: {
-    
     /*===========工具函数============*/
     exchange() {
       //交换函数
@@ -279,8 +281,13 @@ export default {
     },
     /*====================================*/
 
+    showinfo(x, y) {
+      alert(x);
+    },
+
     /*======该方法是：通过点击按钮，向后端发送数据，然后返回得到的数据===*/
-    ticketInquiry() {   //发送起始地目的地之类的，返回一个数组
+    ticketInquiry() {
+      //发送起始地目的地之类的，返回一个数组
       // ctx.$axios.post("url", );
       // console.log(this.departure);
     },
@@ -410,7 +417,7 @@ export default {
 }
 
 .resultDIV {
-  width:1520px;
+  width: 1520px;
   background-color: rgb(250, 250, 250);
 }
 
@@ -451,10 +458,11 @@ export default {
   background-color: #ffffff;
   height: 100%;
   width: 1200px;
+  height: 240px;
   border: 1px solid #eee;
   box-shadow: 0 0 12px 0 rgb(0 0 0 / 6%);
   padding: 10px;
-  top: 0px;
+  top: -24px;
 }
 
 /* 出发-目的-日期-选类别的框 */
@@ -480,7 +488,7 @@ export default {
 
 .cls-box-flight {
   display: flex;
-  margin-top: 50px;
+  margin-top: 20px;
   flex-direction: column;
   width: 500px;
   right: -50px;
@@ -488,7 +496,7 @@ export default {
 
 .cls-box-cabin {
   display: flex;
-  margin-top: 50px;
+  margin-top: 20px;
   flex-direction: column;
   width: 500px;
 }
@@ -578,7 +586,7 @@ export default {
 
 .search {
   position: relative;
-  top: 100%;
+  top: 65%;
   left: 120%;
   transform: translateX(-50%) translateY(-50%);
   text-decoration: none;
@@ -604,7 +612,7 @@ export default {
   color: #fff;
 }
 
-.pay{
+.pay {
   text-decoration: none;
 }
 /*===*/

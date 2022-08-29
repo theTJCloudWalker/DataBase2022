@@ -1,11 +1,5 @@
 <template>
   <div class="background">
-    <div class="buttonrow">
-      欢迎您，{{ Username }}! 这地方到时候是不是顶部栏
-      <router-link to="/Myspace" class="toSpace">
-        <el-button> 个人中心</el-button>
-      </router-link>
-    </div>
     <!--  -->
     <div class="search-form">
       <!-- 起始地选择 -->
