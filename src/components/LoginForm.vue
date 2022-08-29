@@ -38,8 +38,12 @@
 </template>
 
 <script lang="ts">
+import { loginUser } from "@/utils/loginValidators";
 import { ref, getCurrentInstance } from "vue";
+import {useStore} from "vuex"
 export default {
+  components:{
+  },
   props: {
     loginUser: {
       type: Object,
@@ -53,12 +57,20 @@ export default {
   setup() {
     // @ts-ignore
     const { ctx } = getCurrentInstance();//获取实例
-
+    const store=useStore();
+    console.log(store.state.userName);
+    
+    
     // 触发登录方法
     const handleLogin = (formName: string) => {
       ctx.$refs[formName].validate((valid: boolean) => {
         if (valid) {
           alert("submit!");
+
+          /*修改全局用户变量*/
+          var userName=ctx.loginUser.userName;
+          store.commit('set',userName);
+
         } else {
           console.log("error submit!!");
           return false;
