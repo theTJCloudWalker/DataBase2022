@@ -71,7 +71,7 @@
 
 <script>
 import { computed, ref } from 'vue'
-
+import { useStore } from "vuex"
 import { BuyerInfo } from "@/utils/BuyerValidators";
 import BuyerInfoForm from "@/components/BuyerInfoForm.vue";
 
@@ -100,6 +100,9 @@ export default {
   },
    components:{BuyerInfoForm},
    setup(){
+        const store=useStore();
+        console.log(store.state.userId);
+
         return{
             BuyerInfo
         }
@@ -137,14 +140,6 @@ div{
     margin-top: 10px;
 }
 
-/*顶栏*/
-.header-wrapper {
-    width: 100%;
-    height: 80px;
-    background: #fff;
-    border-bottom: 1px solid #d6dde2;
-}
-
 /*主位盒子*/ 
 .main {
     position: relative;
@@ -152,6 +147,7 @@ div{
     width: 780px;
     min-height: 500px;
     padding-top: 10px;
+    padding-left: 10px;
     background: #fdfeff;
     margin-right: 20px;
 }

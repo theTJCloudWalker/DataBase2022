@@ -150,12 +150,12 @@
           <el-table-column prop="price" label="价格" width="100" />
           <el-table-column>
             <template #default="scope">
+              <router-link :to="{path:'/order'}">
               <el-button
                 size="small"
                 type="primary"
                 @click="handlePay(scope.$index, scope.row)"
-                >订购</el-button
-              >
+                >订购</el-button></router-link>
             </template>
           </el-table-column>
         </el-table>
@@ -169,11 +169,12 @@
 <script>
 import { ref } from "vue";
 import { ElTable } from "element-plus";
+import { useStore } from "vuex"
+import { useRouter } from 'vue-router'
 export default {
   name: "TicketInquiry",
   components: {},
   props: ["departure", "destination"], //没卵用，没法传参
-
   data() {
     return {
       cacheDep: "", //缓存上一个填入的地点，用来处理同地点

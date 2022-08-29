@@ -87,8 +87,15 @@
 </template>
 
 <script>
+import { useStore } from "vuex"
 export default {
   name: "myspace",
+  setup(){
+
+        const store=useStore();
+        console.log(store.state.userId);
+  
+  },
   data() {
 
     return {

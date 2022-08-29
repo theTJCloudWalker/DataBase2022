@@ -40,7 +40,8 @@
 <script lang="ts">
 import { loginUser } from "@/utils/loginValidators";
 import { ref, getCurrentInstance } from "vue";
-import {useStore} from "vuex"
+import { useRouter } from 'vue-router'
+import { useStore } from "vuex"
 export default {
   components:{
   },
@@ -58,7 +59,8 @@ export default {
     // @ts-ignore
     const { ctx } = getCurrentInstance();//获取实例
     const store=useStore();
-    console.log(store.state.userName);
+    const router=useRouter();
+    console.log(store.state.userId);
     
     
     // 触发登录方法
@@ -70,7 +72,7 @@ export default {
           /*修改全局用户变量*/
           var userName=ctx.loginUser.userName;
           store.commit('set',userName);
-
+          router.push('/');
         } else {
           console.log("error submit!!");
           return false;
