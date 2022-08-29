@@ -97,6 +97,7 @@
 import { ref } from "vue";
 import TicketInquiry from "./TicketInquiry.vue";
 import { useRouter } from "vue-router";
+import App from "../App.vue";
 
 export default {
   name: "FrontPage",

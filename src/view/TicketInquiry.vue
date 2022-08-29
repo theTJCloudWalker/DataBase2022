@@ -263,6 +263,7 @@ export default {
   },
 
   methods: {
+    
     /*===========工具函数============*/
     exchange() {
       //交换函数
@@ -282,7 +283,7 @@ export default {
     /*====================================*/
 
     /*======该方法是：通过点击按钮，向后端发送数据，然后返回得到的数据===*/
-    ticketInquiry() {
+    ticketInquiry() {   //发送起始地目的地之类的，返回一个数组
       // ctx.$axios.post("url", );
       // console.log(this.departure);
     },
