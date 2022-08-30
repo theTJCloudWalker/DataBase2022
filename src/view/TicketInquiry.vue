@@ -6,7 +6,6 @@
     <div class="form-container">
       <el-form label-width="120px" ref="TicketInquiry" :model="form">
         <!-- ========地点输入======== -->
-
         <div class="form-line">
           <div class="flt-box">
             <!-- =======起始地选择======= -->
@@ -99,13 +98,12 @@
                 <span>请选择航程类别</span>
                 <el-radio :label="1" size="large">单程</el-radio>
                 <el-radio :label="2" size="large">往返</el-radio>
-                <el-radio :label="3" size="large">多程</el-radio>
               </el-radio-group>
             </el-form-item>
           </div>
           <!--  -->
           <div class="cls-box-cabin">
-            <el-form-item>
+            <!-- <el-form-item>
               <div>
                 <el-radio-group v-model="form.cabin">
                   <span>请选择机舱类别</span>
@@ -114,7 +112,7 @@
                   <el-radio :label="3" size="large">头等舱</el-radio>
                 </el-radio-group>
               </div>
-            </el-form-item>
+            </el-form-item> -->
           </div>
           <!--  -->
           <div>
@@ -143,12 +141,74 @@
     <!-- 展示搜索结果 -->
     <div class="resultDIV">
       <div class="searchResult">
-        <br /><br />
-        <p>搜索结果:</p>
+        <div class="resultFilter">
+          <div class="FilterContainer">
+            <br /><br />
+            <p>搜索结果:</p>
+            <div class="filterInput">
+              <el-input
+                v-model="companyFilter"
+                placeholder="请筛选航空公司"
+                filterable
+              />
+            </div>
+            <div class="filterInput">
+              <el-select
+                v-model="companyFilter"
+                placeholder="请筛选航空公司"
+                filterable
+              >
+                <el-option
+                  v-for="item in flightTable"
+                  :key="item.company"
+                  :label="item.label"
+                  :value="item.company"
+                />
+              </el-select>
+            </div>
+          </div>
+          <!-- ============排序按钮============== -->
+          <div class="SortContainer">
+            <div class="sortBox">
+              <el-button @click="timeSort()"> 起飞时间优先 </el-button>
+            </div>
+            <div class="sortBox">
+              <el-button @click="rateSort()"> 准点率高优先 </el-button>
+            </div>
+            <div class="sortBox">
+              <el-button
+                @click="
+                  flightTable.sort((a, b) => {
+                    return b.level - a.level;
+                  })
+                "
+              >
+                评价星级优先
+              </el-button>
+            </div>
+            <div class="sortBox">
+              <el-button
+                @click="
+                  flightTable.sort((a, b) => {
+                    return a.price - b.price;
+                  })
+                "
+              >
+                价格低优先
+              </el-button>
+            </div>
+          </div>
+          <!-- =================== -->
+        </div>
         <el-table
-          :data="flightTable"
+          :data="
+            flightTable.filter(
+              (data) => !companyFilter || data.company.includes(companyFilter)
+            )
+          "
           height="250"
           width="1350"
+          show-header="false"
           ref="singleTableRef"
           highlight-current-row
         >
@@ -231,6 +291,9 @@ export default {
     return {
       cacheDep: "", //缓存上一个填入的地点，用来处理同地点
       cacheDes: "",
+      companyFilter: "", //筛选条件，下同
+      depFilter: "",
+      desFilter: "",
       disabledDate_dep(time) {
         //函数，禁用日期
         return time.getTime() < Date.now() - 8.64e7;
@@ -241,14 +304,20 @@ export default {
       },
       /*======表单数据======*/
       form: {
-        dep: this.$route.query.departure,
-        des: this.$route.query.destination,
+        dep: this.$route.query.departure
+          ? this.$route.query.departure
+          : "上海(HRB)",
+        des: this.$route.query.destination
+          ? this.$route.query.destination
+          : "哈尔滨(HRB)",
         pass: 1, //行程类别
         cabin: 1, //舱类
-        depDate: this.$route.query.depDate,
+        depDate: this.$route.query.depDate
+          ? this.$route.query.depDate
+          : new Date(),
         backDate: this.$route.query.depDate + 24 * 60 * 60 * 100000,
       },
-      /*============*/
+      /*====== 从后端获取机场  ======*/
       cities: [
         {
           value: "哈尔滨",
@@ -265,29 +334,49 @@ export default {
           flight: "MU6060",
           company: "东方航空",
           date: "2016-05-03",
-          // departureSearch: "上海市",
-          // destinationSearch: "北京市",
           departureAirplane: "虹桥T1",
           destinationAirplane: "天安门",
-          depTime: "10:30",
+          depTime: "11:30",
           desTime: "12:30",
-          price: "700",
+          price: 700,
           timeRate: "50%",
+          level: 3.7,
+        },
+        {
+          flight: "MU7070",
+          company: "西方航空",
+          date: "2016-05-03",
+          departureAirplane: "虹桥机场T1",
+          destinationAirplane: "天安门",
+          depTime: "21:30",
+          desTime: "23:30",
+          price: 900,
+          timeRate: "70%",
           level: 1,
         },
         {
-          flight: "MU6060",
-          company: "东方航空",
+          flight: "MU7755",
+          company: "你叠航空",
           date: "2016-05-03",
-          // departureSearch: "上海市",
-          // destinationSearch: "北京市",
-          departureAirplane: "虹桥T1",
+          departureAirplane: "虹桥机场T500",
           destinationAirplane: "天安门",
-          depTime: "10:30",
-          desTime: "12:30",
-          price: "700",
-          timeRate: "50%",
-          level: 1,
+          depTime: "00:30",
+          desTime: "18:30",
+          price: 1700,
+          timeRate: "20%",
+          level: 4.2,
+        },
+        {
+          flight: "MU9755",
+          company: "歪日航空",
+          date: "2016-05-03",
+          departureAirplane: "虹桥机场T-1",
+          destinationAirplane: "天安门",
+          depTime: "10:10",
+          desTime: "18:30",
+          price: 400,
+          timeRate: "78%",
+          level: 2.2,
         },
       ],
     };
@@ -309,6 +398,34 @@ export default {
     },
     setCacheDes() {
       this.cacheDes = this.form.des;
+    },
+    rateSort() {
+      //准点率排序函数
+      this.flightTable.sort((a, b) => {
+        let x = a.timeRate;
+        let y = b.timeRate;
+        if (x > y) {
+          return -1;
+        }
+        if (x < y) {
+          return 1;
+        }
+        return 0;
+      });
+    },
+    timeSort() {
+      //时间排序函数
+      this.flightTable.sort((a, b) => {
+        let x = a.depTime;
+        let y = b.desTime;
+        if (x > y) {
+          return -1;
+        }
+        if (x < y) {
+          return 1;
+        }
+        return 0;
+      });
     },
     /*====================================*/
 
@@ -342,7 +459,7 @@ export default {
   },
 
   mounted() {
-    console.log(this.form.depDate, this.form.backDate);
+    this.form.depDate = new Date();
   },
 };
 </script>
@@ -374,11 +491,6 @@ export default {
   position: relative;
   align-items: center;
   background-color: rgb(255, 255, 255);
-}
-
-/* 输入框 */
-.input {
-  width: 350px;
 }
 
 /* 选项 */
@@ -469,10 +581,19 @@ export default {
   margin-top: -18px;
 }
 
+.flight-box-name1 {
+  text-align: center;
+}
+
+.flight-box-name2 {
+  text-align: center;
+}
+
 .flight-box-name1 p {
   font-size: 25px;
   font-weight: bold;
   margin-top: -5px;
+  text-align: center;
 }
 
 .flight-box-name1 span {
@@ -492,6 +613,7 @@ export default {
   font-size: 25px;
   font-weight: bold;
   margin-top: -5px;
+  text-align: center;
 }
 
 .flight-box-name2 span {
@@ -741,5 +863,30 @@ export default {
   color: #fff;
 }
 
+.resultFilter {
+  display: flex;
+  flex-direction: row;
+  position: relative;
+  margin-top: 50px;
+}
+
+.filterInput {
+  margin: 20px 10px 10px 10px;
+  width: 200px;
+}
+
+.FilterContainer {
+  display: flex;
+}
+
+.SortContainer {
+  display: flex;
+  margin-top: 20px;
+  padding-left: 300px;
+}
+
+.sortBox{
+  margin-left:30px;
+}
 /*===*/
 </style>
