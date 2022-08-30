@@ -55,14 +55,39 @@
             </div>
           </div>
           <!-- 日期选择 -->
-          <div class="date-box">
+          <div v-if="form.pass === 1 || form.pass === 3" class="date-box">
             <span>出发日期</span>
             <div class="date-picker">
               <el-date-picker
                 v-model="form.depDate"
                 type="date"
                 placeholder="选择出发日期"
+                :disabled-date="disabledDate_dep"
               />
+            </div>
+          </div>
+          <div v-else class="date-box2">
+            <div class="date-box-dep">
+              <span>出发日期</span>
+              <div class="date-picker2">
+                <el-date-picker
+                  v-model="form.depDate"
+                  type="date"
+                  placeholder="选择出发日期"
+                  :disabled-date="disabledDate_dep"
+                />
+              </div>
+            </div>
+            <div class="date-box-des">
+              <span>返回日期</span>
+              <div class="date-picker2">
+                <el-date-picker
+                  v-model="form.backDate"
+                  :disabled-date="disabledDate_back"
+                  type="date"
+                  placeholder="选择返回日期"
+                />
+              </div>
             </div>
           </div>
           <!-- 日期选择结束 -->
@@ -126,7 +151,6 @@
           width="1350"
           ref="singleTableRef"
           highlight-current-row
-          @current-change="handleCurrentChange"
         >
           <el-table-column width="1405px">
             <template #default="scope">
@@ -136,9 +160,18 @@
                   <div>
                     <h3>{{ flightTable[scope.$index].company }}</h3>
                   </div>
-                  <span @mouseover="showinfo(scope.$index, scope.row)">
-                    {{ flightTable[scope.$index].flight }}
-                  </span>
+                  <div class="flight-id">
+                    <span>
+                      {{ flightTable[scope.$index].flight }}
+                    </span>
+                    <div class="flight-level">
+                      <el-rate
+                        v-model="flightTable[scope.$index].level"
+                        disabled
+                        text-color="#ff9900"
+                      />
+                    </div>
+                  </div>
                 </div>
                 <!-- ================== -->
                 <!-- =====航班具体显示========= -->
@@ -178,47 +211,6 @@
               </div>
             </template>
           </el-table-column>
-          <!--  <el-table-column prop="date" label="日期" width="200" />
-          <el-table-column
-            prop="company"
-            label="航空公司"
-            width="200"
-            #default="scope"
-            @mouseover="showinfo(scope.$index, scope.row)"
-          >
-          </el-table-column>
-          <el-table-column prop="flight" label="航班" width="150" />
-          <el-table-column
-            prop="departureAirplane"
-            label="起飞机场"
-            width="100"
-          />
-          <el-table-column
-            prop="destinationAirplane"
-            label="降落机场"
-            width="100"
-          />
-          <el-table-column prop="depTime" label="起飞时间" width="100" />
-          <el-table-column prop="price" label="价格" width="100" />
-          <el-table-column prop="flightTable" label="666" width="100">
-            <template #default="scope">
-              <div>
-                {{ flightTable[scope.$index].flight }}
-              </div>
-            </template>
-          </el-table-column> -->
-          <!-- <el-table-column>
-            <template #default="scope">
-              <router-link to="/order" class="pay">
-                <el-button
-                  size="small"
-                  type="primary"
-                  @click="handlePay(scope.$index, scope.row)"
-                  >订购</el-button
-                >
-              </router-link>
-            </template>
-          </el-table-column> -->
         </el-table>
       </div>
     </div>
@@ -239,6 +231,14 @@ export default {
     return {
       cacheDep: "", //缓存上一个填入的地点，用来处理同地点
       cacheDes: "",
+      disabledDate_dep(time) {
+        //函数，禁用日期
+        return time.getTime() < Date.now() - 8.64e7;
+      },
+      disabledDate_back(time) {
+        //函数，禁用日期
+        return time.getTime() < Date.now() - 8.64e7;
+      },
       /*======表单数据======*/
       form: {
         dep: this.$route.query.departure,
@@ -246,6 +246,7 @@ export default {
         pass: 1, //行程类别
         cabin: 1, //舱类
         depDate: this.$route.query.depDate,
+        backDate: this.$route.query.depDate + 24 * 60 * 60 * 100000,
       },
       /*============*/
       cities: [
@@ -311,10 +312,6 @@ export default {
     },
     /*====================================*/
 
-    showinfo(x, y) {
-      alert(x);
-    },
-
     /*======该方法是：通过点击按钮，向后端发送数据，然后返回得到的数据===*/
     ticketInquiry() {
       //发送起始地目的地之类的，返回一个数组
@@ -345,36 +342,8 @@ export default {
   },
 
   mounted() {
-    // this.dep = this.$route.query.routeSearch(departure);
+    console.log(this.form.depDate, this.form.backDate);
   },
-
-  /*=====数据、方法======*/
-  // setup() {
-  //   let pass = ref(0); //行程类别
-  //   let cabin = ref(0); //舱类
-  //   const value1 = ref(""); //date
-
-  //   return {
-  //     dep: this.departure, //出发日期
-  //     des: "", //目的地日期
-  //     // dep:this.departure,
-  //     // des:this.destination,
-  //     pass, //行程类别
-  //     cabin, //舱类
-  //     ifshow: 1,
-  //     value1: "0",
-  //     date: ["2000", "2021"],
-  //     flightTable: [
-  //       {
-  //         date: "2016-05-03",
-  //         departureSearch: "上海市",
-  //         destinationSearch: "北京市",
-  //         flight: "MU6060",
-  //       },
-  //     ],
-  //   };
-  // },
-  /*====================*/
 };
 </script>
 
@@ -397,7 +366,7 @@ export default {
 
 .form-container {
   width: 1520px;
-  height: 100%;
+  height: 240px;
   background-size: cover;
   position: relative;
   display: flex;
@@ -468,11 +437,12 @@ export default {
   width: 1300px;
   /* height: 240px; */
   padding: 10px;
-  margin-left:30px;
+  margin-left: 30px;
 }
 
-
 .flight-company {
+  text-align: left;
+  width: 200px;
   margin-top: 5px;
   margin-left: 40px;
 }
@@ -482,11 +452,21 @@ export default {
   margin-top: -10px;
 }
 
-.flight-company span {
-  display: block;
+.flight-id {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  position: relative;
+}
+
+.flight-id span {
   font-size: 15px;
   color: #3187f9;
   margin-top: -10px;
+}
+
+.flight-id .flight-level {
+  margin-top: -18px;
 }
 
 .flight-box-name1 p {
@@ -503,7 +483,7 @@ export default {
 
 .flight-arrow {
   background: #eee;
-  margin: 15px -100px 15px -100px;
+  margin: 15px -50px 15px -50px;
   padding: 0px 100px 0px 100px;
   border-top-right-radius: 15px;
 }
@@ -540,14 +520,14 @@ export default {
   text-decoration: none;
 }
 
-.pay-button{
+.pay-button {
   height: 40px;
-  width:100px;
+  width: 100px;
   font-weight: bold;
   font-size: 18px;
   background-color: rgb(255, 174, 0);
   background-image: linear-gradient(-90deg, rgb(0, 187, 255), #007ed2);
-  size:20px;
+  size: 20px;
 }
 /*===*/
 /* 搜索框布局 */
@@ -606,6 +586,17 @@ export default {
   box-shadow: 0 0 12px 0 rgb(0 0 0 / 6%);
 }
 
+.date-box2 {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  border: 1px solid;
+  border-radius: 6px;
+  width: 500px;
+  border: 1px solid #eee;
+  box-shadow: 0 0 12px 0 rgb(0 0 0 / 6%);
+}
+
 .cls-box-flight {
   display: flex;
   margin-top: 20px;
@@ -639,6 +630,12 @@ export default {
   margin: 10px 0px 4px 15px;
 }
 
+.date-box2 span {
+  color: #3187f9;
+  font-size: 20px;
+  margin: 20px 0px 4px 15px;
+}
+
 .cls-box-flight span {
   color: #3187f9;
   font-size: 20px;
@@ -668,7 +665,7 @@ export default {
   box-shadow: 0 0 12px 0 rgb(0 0 0 / 10%);
 } */
 
-/* 出发目的框的出发框 */
+/* 出发目的框时间框小框 */
 .flt-depart {
   display: flex;
   flex-direction: column;
@@ -681,6 +678,13 @@ export default {
   left: 30px;
 }
 
+.date-box-dep {
+  margin: 10px 0px 0px 0px;
+}
+
+.date-box-des {
+  margin: 10px 20px 0px 0px;
+}
 /* 交换按钮 */
 .switch-button {
   position: relative;
@@ -702,6 +706,11 @@ export default {
 .date-picker {
   margin: 10px 10px 10px 10px;
   width: 300px;
+}
+
+.date-picker2 {
+  margin: 10px 10px 10px 10px;
+  width: 200px;
 }
 
 .search {

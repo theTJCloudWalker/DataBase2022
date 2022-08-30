@@ -104,7 +104,6 @@ export default {
       destination: "哈尔滨",
       Username: "user",
       depDate: "",
-      disabledDate: "",
 
       disabledDate(time) {
         //函数，禁用日期
@@ -142,7 +141,7 @@ export default {
       this.cacheDes = this.destination;
     },
     search() {
-      console.log("带值跳转，不知道如何实现");
+      //console.log("带值跳转，不知道如何实现");
       this.$router.push({
         path: "/TicketInquiry",
         //这里传的是一个对象
