@@ -117,8 +117,11 @@
           <!--  -->
           <div>
             <div class="search">
-              <el-button class="search-button" @click="ticketInquiry()">
+              <el-button v-if="ifPicked===false || form.pass===1" class="search-button" @click="ticketInquiry(form.dep,form.des)">
                 搜索</el-button
+              >
+              <el-button v-else class="search-button" @click="ticketInquiry(form.des,form.dep)">
+                搜索2</el-button
               >
               <svg
                 viewBox="0 0 1024 1024"
@@ -171,20 +174,6 @@
                 清空筛选条件
               </el-button>
             </div>
-            <!-- <div class="filterInput">
-              <el-select
-                v-model="companyFilter"
-                placeholder="请筛选航空公司"
-                filterable
-              >
-                <el-option
-                  v-for="item in flightTable"
-                  :key="item.company"
-                  :label="item.label"
-                  :value="item.company"
-                />
-              </el-select>
-            </div> -->
           </div>
           <!-- ============排序按钮============== -->
           <div class="SortContainer">
@@ -279,16 +268,38 @@
                 </div>
                 <!--  -->
                 <!-- ============订购按钮=========== -->
-                <div class="pay">
-                  <router-link to="/order" style="text-decoration: none">
+                <div v-if="form.pass===1" class="pay">
+                  <!-- <router-link to="/order" style="text-decoration: none"> -->
                     <el-button
                       size="small"
                       type="primary"
                       class="pay-button"
-                      @click="handlePay(scope.$index, scope.row)"
+                      @click="handlePay(scope.$index)"
                       >订购</el-button
                     >
-                  </router-link>
+                  <!-- </router-link> -->
+                </div>
+                <div v-else-if="ifPicked===false"  class="pay">
+                  <!-- <router-link to="/order" style="text-decoration: none"> -->
+                    <el-button
+                      size="small"
+                      type="primary"
+                      class="pay-button"
+                      @click="chooseGo(scope.$index)"
+                      >选为去程</el-button
+                    >
+                  <!-- </router-link> -->
+                </div>
+                <div v-else class="pay">
+                  <!-- <router-link to="/order" style="text-decoration: none"> -->
+                    <el-button
+                      size="small"
+                      type="primary"
+                      class="pay-button"
+                      @click="handlePay(scope.$index)"
+                      >订购</el-button
+                    >
+                  <!-- </router-link> -->
                 </div>
                 <!--  -->
               </div>
@@ -318,6 +329,7 @@ export default {
       companyFilter: "", //筛选条件，下同
       depFilter: "",
       desFilter: "",
+      ifPicked:false, //第一程是否选定
       priceTable: [
         {
           value: 500,
@@ -339,10 +351,10 @@ export default {
       form: {
         dep: this.$route.query.departure
           ? this.$route.query.departure
-          : "上海(HRB)",
+          : "上海",
         des: this.$route.query.destination
           ? this.$route.query.destination
-          : "哈尔滨(HRB)",
+          : "哈尔滨",
         pass: 1, //行程类别
         cabin: 1, //舱类
         depDate: this.$route.query.depDate
@@ -412,6 +424,7 @@ export default {
           level: 2.2,
         },
       ],
+      /*====返回给下个页面的订单=====*/
     };
   },
 
@@ -469,9 +482,9 @@ export default {
     /*====================================*/
 
     /*======该方法是：通过点击按钮，向后端发送数据，然后返回得到的数据===*/
-    ticketInquiry() {
+    ticketInquiry(dep,des) {
       let that = this;
-      const restable = this.get();
+      const restable = this.get(dep,des);
       restable.then(function (response) {
         console.log(response.data);
         that.flightTable = [];
@@ -479,19 +492,30 @@ export default {
       });
     },
 
-    handlePay(x, y) {
+    handlePay(x) {
       //跳转到支付订购
+       this.$router.push({
+        path: "/order",
+        //这里传的是一个对象
+        query: {
+        },
+      });
+    },
+
+    chooseGo(x){ //选为去程
+        this.ifPicked=true;
     },
 
     /*=== 关键函数get用于获取数据 ===*/
-    get() {
+    get(dep,des) {
       let that = this;
+      console.log(dep,des);
       return axios({
         method: "post",
         url: "https://150.158.80.33:7191/api/Flight/Filter",
         data: {
-          departureAirport: that.form.dep,
-          arrivalAirport: that.form.des,
+          departureAirport: dep,
+          arrivalAirport: des,
         },
       });
     },
@@ -516,7 +540,8 @@ export default {
 
   mounted() {
     this.form.depDate = new Date();
-    this.ticketInquiry();
+    console.log(this.form.dep,this.form.des);
+    this.ticketInquiry(this.form.dep,this.form.des);
   },
 };
 </script>
