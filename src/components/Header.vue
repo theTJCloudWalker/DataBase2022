@@ -5,8 +5,8 @@
     mode="horizontal"
     @select="handleSelect"
     >
-    <router-link class="alink" to="../TicketInquiry">
-      <el-menu-item index="1">首页</el-menu-item>
+    <router-link class="alink" to="../">
+      <el-menu-item index="1">机票</el-menu-item>
     </router-link>
     
     <router-link class="alink" to="../myspace">

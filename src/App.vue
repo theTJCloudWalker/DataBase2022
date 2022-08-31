@@ -17,10 +17,12 @@
 import  myHeader  from "@/components/Header.vue";
 export default {
   name: 'App',
+
   components: 
   {
     myHeader
   }
+
 }
 </script>
 

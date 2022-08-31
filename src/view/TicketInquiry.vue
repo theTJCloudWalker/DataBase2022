@@ -1,13 +1,11 @@
 <template>
   <div>
     <!-- **====================** -->
-    <div class="topBar">
-    </div>
+    <div class="topBar"></div>
     <!-- **====================** -->
     <div class="form-container">
       <el-form label-width="120px" ref="TicketInquiry" :model="form">
         <!-- ========地点输入======== -->
-
         <div class="form-line">
           <div class="flt-box">
             <!-- =======起始地选择======= -->
@@ -18,7 +16,7 @@
                   v-model="form.dep"
                   placeholder="请选择出发地"
                   filterable
-                  @click="setCacheDep"
+                  @click="cacheDep = form.dep"
                 >
                   <el-option
                     v-for="item in cities"
@@ -43,7 +41,7 @@
                   v-model="form.des"
                   placeholder="请选择目的地"
                   filterable
-                  @click="setCacheDes"
+                  @click="cacheDes = form.des"
                 >
                   <el-option
                     v-for="item in cities"
@@ -56,14 +54,41 @@
             </div>
           </div>
           <!-- 日期选择 -->
-          <div class="date-box">
+          <div v-if="form.pass === 1 || form.pass === 3" class="date-box">
             <span>出发日期</span>
             <div class="date-picker">
               <el-date-picker
                 v-model="form.depDate"
                 type="date"
                 placeholder="选择出发日期"
+                :disabled-date="disabledDate_dep"
+                @click="cacheDepDate = form.depDate"
               />
+            </div>
+          </div>
+          <div v-else class="date-box2">
+            <div class="date-box-dep">
+              <span>出发日期</span>
+              <div class="date-picker2">
+                <el-date-picker
+                  v-model="form.depDate"
+                  type="date"
+                  placeholder="选择出发日期"
+                  :disabled-date="disabledDate_dep"
+                />
+              </div>
+            </div>
+            <div class="date-box-des">
+              <span>返回日期</span>
+              <div class="date-picker2">
+                <el-date-picker
+                  v-model="form.backDate"
+                  :disabled-date="disabledDate_back"
+                  type="date"
+                  placeholder="选择返回日期"
+                  @click="cacheDepDate = form.depDate"
+                />
+              </div>
             </div>
           </div>
           <!-- 日期选择结束 -->
@@ -75,13 +100,12 @@
                 <span>请选择航程类别</span>
                 <el-radio :label="1" size="large">单程</el-radio>
                 <el-radio :label="2" size="large">往返</el-radio>
-                <el-radio :label="3" size="large">多程</el-radio>
               </el-radio-group>
             </el-form-item>
           </div>
           <!--  -->
           <div class="cls-box-cabin">
-            <el-form-item>
+            <!-- <el-form-item>
               <div>
                 <el-radio-group v-model="form.cabin">
                   <span>请选择机舱类别</span>
@@ -90,12 +114,25 @@
                   <el-radio :label="3" size="large">头等舱</el-radio>
                 </el-radio-group>
               </div>
-            </el-form-item>
+            </el-form-item> -->
           </div>
           <!--  -->
           <div>
-            <router-link to="" class="search">
-              <el-button class="search-button" @click="search"> 搜索</el-button>
+            <div class="search">
+              <el-button
+                v-if="ifPicked === false || form.pass === 1"
+                class="search-button"
+                @click="ticketInquiry(form.dep, form.des)"
+              >
+                搜索</el-button
+              >
+              <el-button
+                v-else
+                class="search-button"
+                @click="ticketInquiry(form.des, form.dep)"
+              >
+                搜索2</el-button
+              >
               <svg
                 viewBox="0 0 1024 1024"
                 xmlns="http://www.w3.org/2000/svg"
@@ -106,7 +143,7 @@
                   d="m795.904 750.72 124.992 124.928a32 32 0 0 1-45.248 45.248L750.656 795.904a416 416 0 1 1 45.248-45.248zM480 832a352 352 0 1 0 0-704 352 352 0 0 0 0 704z"
                 ></path>
               </svg>
-            </router-link>
+            </div>
           </div>
           <!--  -->
         </div>
@@ -117,45 +154,175 @@
     <!-- 展示搜索结果 -->
     <div class="resultDIV">
       <div class="searchResult">
-        <br /><br />
-        <p>搜索结果:</p>
+        <div class="resultFilter">
+          <div class="FilterContainer">
+            <br /><br />
+            <p>搜索结果:</p>
+            <div class="filterInput">
+              <el-input
+                v-model="companyFilter"
+                placeholder="请筛选航空公司"
+                filterable
+              />
+            </div>
+            <div class="filterInput">
+              <el-input
+                v-model="depFilter"
+                placeholder="请筛选起飞机场"
+                filterable
+              />
+            </div>
+            <div class="filterInput">
+              <el-input
+                v-model="desFilter"
+                placeholder="请筛选降落机场"
+                filterable
+              />
+            </div>
+            <div class="filterInput">
+              <el-button type="success" @click="clearFilter()">
+                清空筛选条件
+              </el-button>
+            </div>
+          </div>
+          <!-- ============排序按钮============== -->
+          <div class="SortContainer">
+            <div class="sortBox">
+              <el-button @click="timeSort()"> 起飞时间优先 </el-button>
+            </div>
+            <div class="sortBox">
+              <el-button @click="rateSort()"> 准点率高优先 </el-button>
+            </div>
+            <div class="sortBox">
+              <el-button
+                @click="
+                  flightTable.sort((a, b) => {
+                    return b.level - a.level;
+                  })
+                "
+              >
+                评价星级优先
+              </el-button>
+            </div>
+            <div class="sortBox">
+              <el-button
+                @click="
+                  flightTable.sort((a, b) => {
+                    return a.price - b.price;
+                  })
+                "
+              >
+                价格低优先
+              </el-button>
+            </div>
+          </div>
+          <!-- =================== -->
+        </div>
         <el-table
-          :data="flightTable"
+          :data="
+            flightTable.filter(
+              (data) =>
+                (!companyFilter && !desFilter && !depFilter) ||
+                (data.company.includes(companyFilter) &&
+                  data.departureAirplane.includes(depFilter) &&
+                  data.destinationAirplane.includes(desFilter))
+            )
+          "
           height="250"
-          width="1200"
+          width="1350"
+          show-header="false"
           ref="singleTableRef"
           highlight-current-row
-          @current-change="handleCurrentChange"
         >
-          <el-table-column prop="date" label="日期" width="200" />
-          <el-table-column prop="company" label="航空公司" width="200" />
-          <el-table-column prop="flight" label="航班" width="150" />
-          <el-table-column prop="departureSearch" label="起始地" width="100" />
-          <el-table-column
-            prop="departureAirplane"
-            label="起飞机场"
-            width="100"
-          />
-          <el-table-column
-            prop="destinationSearch"
-            label="目的地"
-            width="100"
-          />
-          <el-table-column
-            prop="destinationAirplane"
-            label="降落机场"
-            width="100"
-          />
-          <el-table-column prop="depTime" label="起飞时间" width="100" />
-          <el-table-column prop="price" label="价格" width="100" />
-          <el-table-column>
+          <el-table-column width="1405px">
             <template #default="scope">
-              <router-link :to="{path:'/order'}">
-              <el-button
-                size="small"
-                type="primary"
-                @click="handlePay(scope.$index, scope.row)"
-                >订购</el-button></router-link>
+              <div class="flight-box">
+                <!-- ========航空公司====== -->
+                <div class="flight-company">
+                  <div>
+                    <h3>{{ flightTable[scope.$index].company }}</h3>
+                  </div>
+                  <div class="flight-id">
+                    <span>
+                      {{ flightTable[scope.$index].flight }}
+                    </span>
+                    <div class="flight-level">
+                      <el-rate
+                        v-model="flightTable[scope.$index].level"
+                        disabled
+                        text-color="#ff9900"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <!-- ================== -->
+                <!-- =====航班具体显示========= -->
+                <div class="flight-box-name1">
+                  <p>{{ flightTable[scope.$index].depTime }}</p>
+                  <span>{{ flightTable[scope.$index].departureAirplane }}</span>
+                </div>
+                <!--  -->
+                <div class="flight-arrow"></div>
+                <!--  -->
+                <div class="flight-box-name2">
+                  <p>{{ flightTable[scope.$index].desTime }}</p>
+                  <span>{{
+                    flightTable[scope.$index].destinationAirplane
+                  }}</span>
+                </div>
+                <div class="flight-rate">
+                  <span>准点率:{{ flightTable[scope.$index].timeRate }}</span>
+                </div>
+                <div class="flight-price">
+                  <span>¥{{ flightTable[scope.$index].price }}</span>
+                </div>
+                <!--  -->
+                <!-- ============订购按钮=========== -->
+                <div v-if="form.pass === 1" class="pay">
+                  <!-- <router-link to="/order" style="text-decoration: none"> -->
+                  <el-button
+                    size="small"
+                    type="primary"
+                    class="pay-button"
+                    @click="handlePay(scope.$index)"
+                    >订购</el-button
+                  >
+                  <!-- </router-link> -->
+                </div>
+                <div v-else-if="ifPicked === false" class="pay">
+                  <!-- <router-link to="/order" style="text-decoration: none"> -->
+                  <el-button
+                    size="small"
+                    type="primary"
+                    class="pay-button"
+                    @click="chooseGo(scope.$index)"
+                    >选为去程</el-button
+                  >
+                  <!-- </router-link> -->
+                </div>
+                <div v-else class="pay">
+                  <!-- <router-link to="/order" style="text-decoration: none"> -->
+                  <el-button
+                    size="small"
+                    type="primary"
+                    class="pay-button"
+                    @click="handlePay(scope.$index)"
+                    >订购</el-button
+                  >
+                  <!-- </router-link> -->
+                </div>
+                <div v-if="ifPicked === true">
+                  <el-button
+                    size="small"
+                    type="primary"
+                    @click="Back(scope.$index)"
+                    >Back</el-button
+                  >
+                  <!-- </router-link> -->
+                </div>
+                <!--  -->
+              </div>
+
             </template>
           </el-table-column>
         </el-table>
@@ -169,8 +336,9 @@
 <script>
 import { ref } from "vue";
 import { ElTable } from "element-plus";
-import { useStore } from "vuex"
-import { useRouter } from 'vue-router'
+
+import axios from "axios";
+
 export default {
   name: "TicketInquiry",
   components: {},
@@ -179,17 +347,43 @@ export default {
     return {
       cacheDep: "", //缓存上一个填入的地点，用来处理同地点
       cacheDes: "",
+      cacheDepDate: new Date(), //缓存上一个选择的出发时间，下同
+      cacheDesDate: new Date(),
+      companyFilter: "", //筛选条件，下同
+      depFilter: "",
+      desFilter: "",
+      ifPicked: false, //第一程是否选定
+      priceTable: [
+        {
+          value: 500,
+          label: "0~500",
+        },
+        {
+          value: 1000,
+        },
+      ], //用于筛选
+      disabledDate_dep(time) {
+        //函数，禁用日期
+        return time.getTime() < Date.now() - 8.64e7;
+      },
+      disabledDate_back(time) {
+        //函数，禁用日期
+        return time.getTime() < Date.now();
+      },
       /*======表单数据======*/
       form: {
-        dep: this.departure, //出发
-        des: this.destination, //目的地
-        // dep:this.departure,
-        // des:this.destination,
+        dep: this.$route.query.departure ? this.$route.query.departure : "上海",
+        des: this.$route.query.destination
+          ? this.$route.query.destination
+          : "哈尔滨",
         pass: 1, //行程类别
         cabin: 1, //舱类
-        depDate: "",
+        depDate: this.$route.query.depDate
+          ? this.$route.query.depDate
+          : new Date(),
+        backDate: this.$route.query.depDate + 24 * 60 * 60 * 100000,
       },
-      /*============*/
+      /*====== 从后端获取机场  ======*/
       cities: [
         {
           value: "哈尔滨",
@@ -203,59 +397,61 @@ export default {
       /*====应该从后端获得的数据=====*/
       flightTable: [
         {
+          flightId: 0,
           flight: "MU6060",
           company: "东方航空",
           date: "2016-05-03",
-          departureSearch: "上海市",
-          destinationSearch: "北京市",
           departureAirplane: "虹桥T1",
           destinationAirplane: "天安门",
-          depTime: "10:30",
-          price: "700",
+          depTime: "11:30",
+          desTime: "12:30",
+          price: 700,
+          timeRate: "50%",
+          level: 3.7,
         },
         {
-          flight: "MU7060",
-          company: "东方航空",
+          flight_id: 1,
+          flight: "MU7070",
+          company: "西方航空",
           date: "2016-05-03",
-          departureSearch: "上海市",
-          destinationSearch: "北京市",
-          departureAirplane: "虹桥T1",
+          departureAirplane: "虹桥机场T1",
           destinationAirplane: "天安门",
-          depTime: "10:30",
-          price: "700",
+          depTime: "21:30",
+          desTime: "23:30",
+          price: 900,
+          timeRate: "70%",
+          level: 1,
         },
         {
-          flight: "MU7060",
-          company: "春秋航空",
+          flight_id: 2,
+          flight: "MU7755",
+          company: "你叠航空",
           date: "2016-05-03",
-          departureSearch: "上海市",
-          destinationSearch: "北京市",
-          departureAirplane: "虹桥T1",
+          departureAirplane: "虹桥机场T500",
           destinationAirplane: "天安门",
-          depTime: "10:30",
-          price: "700",
+          depTime: "00:30",
+          desTime: "18:30",
+          price: 1700,
+          timeRate: "20%",
+          level: 4.2,
         },
         {
-          flight: "MU7060",
+          flight_id: 3,
+          flight: "MU9755",
+          company: "歪日航空",
           date: "2016-05-03",
-          departureSearch: "上海市",
-          destinationSearch: "北京市",
-          departureAirplane: "虹桥T1",
+          departureAirplane: "虹桥机场T-1",
           destinationAirplane: "天安门",
-          depTime: "10:30",
-          price: "700",
-        },
-        {
-          flight: "MU7060",
-          date: "2016-05-03",
-          departureSearch: "上海市",
-          destinationSearch: "北京市",
-          departureAirplane: "虹桥T1",
-          destinationAirplane: "天安门",
-          depTime: "10:30",
-          price: "700",
+          depTime: "10:10",
+          desTime: "18:30",
+          price: 400,
+          timeRate: "78%",
+          level: 2.2,
         },
       ],
+
+      order: [],
+      /*====返回给下个页面的订单=====*/
     };
   },
 
@@ -269,74 +465,130 @@ export default {
       this.form.des = temp;
       console.log(this.form.pass);
     },
-    setCacheDep() {
-      //设置缓冲下同
-      this.cacheDep = this.form.dep;
+    // setCacheDep() {
+    //   //设置缓冲下同
+    //   this.cacheDep = this.form.dep;
+    // },
+    // setCacheDes() {
+    //   this.cacheDes = this.form.des;
+    // },
+    rateSort() {
+      //准点率排序函数
+      this.flightTable.sort((a, b) => {
+        let x = a.timeRate;
+        let y = b.timeRate;
+        if (x > y) {
+          return -1;
+        }
+        if (x < y) {
+          return 1;
+        }
+        return 0;
+      });
     },
-    setCacheDes() {
-      this.cacheDes = this.form.des;
+    timeSort() {
+      //时间排序函数
+      this.flightTable.sort((a, b) => {
+        let x = a.depTime;
+        let y = b.desTime;
+        if (x > y) {
+          return -1;
+        }
+        if (x < y) {
+          return 1;
+        }
+        return 0;
+      });
+    },
+    clearFilter() {
+      //清空筛选器
+      this.depFilter = "";
+      this.desFilter = "";
+      this.companyFilter = "";
     },
     /*====================================*/
 
     /*======该方法是：通过点击按钮，向后端发送数据，然后返回得到的数据===*/
-    ticketInquiry() {
-      // ctx.$axios.post("url", );
-      // console.log(this.departure);
+    ticketInquiry(dep, des) {
+      let that = this;
+      const restable = this.get(dep, des);
+      restable.then(function (response) {
+        console.log(response.data);
+        that.flightTable = [];
+        response.data.data.forEach((value) => that.flightTable.push(value));
+      });
     },
 
-    handlePay(x, y) {
+    handlePay(x) {
+      let fid = this.flightTable[x].flightId; //添加要转移的数据
+      let fname = this.flightTable[x].flight;
+      let pass_ = this.form.pass;
+      this.order.push({ flightId: fid, flight: fname, pass: pass_ });
       //跳转到支付订购
+      console.log(this.order); //等待发射order
+      //  this.$router.push({
+      //   path: "/order",
+      //   //这里传的是一个对象
+      //   query: {
+      //   },
+      // });
+    },
+
+    chooseGo(x) {
+      //选为去程
+      this.ifPicked = true;
+      let fid = this.flightTable[x].flightId;
+      let fname = this.flightTable[x].flight;
+      let pass_ = this.form.pass;
+      this.order.push({ flightId: fid, flight: fname, pass: pass_ });
+    },
+
+    /*=== 关键函数get用于获取数据 ===*/
+    get(dep, des) {
+      let that = this;
+      console.log(dep, des);
+      return axios({
+        method: "post",
+        url: "https://150.158.80.33:7191/api/Flight/Filter",
+        data: {
+          departureAirport: dep,
+          arrivalAirport: des,
+        },
+      });
     },
   },
 
   watch: {
-    'form.dep'() {
+    "form.dep"() {
       //监视器，监视相同时交换
       if (this.form.dep === this.form.des) {
         this.form.dep = this.cacheDep;
         this.exchange();
       }
     },
-    'form.des'() {
+    "form.des"() {
       //监视器，监视相同时交换
       if (this.form.dep === this.form.des) {
         this.form.des = this.cacheDes;
         this.exchange();
       }
     },
+    "form.pass"() {
+      this.ifPicked = false;
+      this.order = [];
+    },
+    // "form.depDate"() {
+    //   console.log(this.form.depDate);
+    //   if (this.form.depDate == null || this.form.depDate < this.form.backDate) this.form.depDate = this.cacheDepDate;
+    // },
   },
 
   mounted() {
-    this.form.depDate = new Date();
+    this.form.depDate = new Date(); //初始化返程日期，如果有
+    this.form.backDate = new Date();
+    this.form.backDate.setDate(this.form.depDate.getDate() + 1);
+    this.ticketInquiry(this.form.dep, this.form.des); //渲染完后就显示搜索结果
   },
-
-  /*=====数据、方法======*/
-  // setup() {
-  //   let pass = ref(0); //行程类别
-  //   let cabin = ref(0); //舱类
-  //   const value1 = ref(""); //date
-
-  //   return {
-  //     dep: this.departure, //出发日期
-  //     des: "", //目的地日期
-  //     // dep:this.departure,
-  //     // des:this.destination,
-  //     pass, //行程类别
-  //     cabin, //舱类
-  //     ifshow: 1,
-  //     value1: "0",
-  //     date: ["2000", "2021"],
-  //     flightTable: [
-  //       {
-  //         date: "2016-05-03",
-  //         departureSearch: "上海市",
-  //         destinationSearch: "北京市",
-  //         flight: "MU6060",
-  //       },
-  //     ],
-  //   };
-  // },
-  /*====================*/
 };
 </script>
 
@@ -358,8 +610,8 @@ export default {
 }
 
 .form-container {
-  width: 100%;
-  height: 100%;
+  width: 1520px;
+  height: 240px;
   background-size: cover;
   position: relative;
   display: flex;
@@ -367,11 +619,6 @@ export default {
   position: relative;
   align-items: center;
   background-color: rgb(255, 255, 255);
-}
-
-/* 输入框 */
-.input {
-  width: 350px;
 }
 
 /* 选项 */
@@ -408,6 +655,7 @@ export default {
 }
 
 .resultDIV {
+  width: 1520px;
   background-color: rgb(250, 250, 250);
 }
 
@@ -418,7 +666,119 @@ export default {
 }
 
 /*==========*/
+/* flight数组 搜索结果框 */
+.flight-box {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  position: relative;
+  /* background-color: #ffffff; */
+  height: 60px;
+  width: 1300px;
+  /* height: 240px; */
+  padding: 10px;
+  margin-left: 30px;
+}
 
+.flight-company {
+  text-align: left;
+  width: 200px;
+  margin-top: 5px;
+  margin-left: 40px;
+}
+
+.flight-company h3 {
+  font-size: 20px;
+  margin-top: -10px;
+}
+
+.flight-id {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  position: relative;
+}
+
+.flight-id span {
+  font-size: 15px;
+  color: #3187f9;
+  margin-top: -10px;
+}
+
+.flight-id .flight-level {
+  margin-top: -18px;
+}
+
+.flight-box-name1 {
+  text-align: center;
+}
+
+.flight-box-name2 {
+  text-align: center;
+}
+
+.flight-box-name1 p {
+  font-size: 25px;
+  font-weight: bold;
+  margin-top: -5px;
+  text-align: center;
+}
+
+.flight-box-name1 span {
+  display: block;
+  margin-top: -15px;
+  text-align: center;
+}
+
+.flight-arrow {
+  background: #eee;
+  margin: 15px -50px 15px -50px;
+  padding: 0px 100px 0px 100px;
+  border-top-right-radius: 15px;
+}
+
+.flight-box-name2 p {
+  font-size: 25px;
+  font-weight: bold;
+  margin-top: -5px;
+  text-align: center;
+}
+
+.flight-box-name2 span {
+  display: block;
+  margin-top: -15px;
+  text-align: center;
+}
+
+.flight-rate {
+  color: #3187f9;
+  text-align: center;
+  margin: 10px 30px;
+}
+
+.flight-price {
+  font-size: 20px;
+  font-weight: bold;
+  color: #3187f9;
+  text-align: center;
+  margin: 10px;
+}
+
+.pay {
+  margin-top: 5px;
+  margin-right: 40px;
+  text-decoration: none;
+}
+
+.pay-button {
+  height: 40px;
+  width: 100px;
+  font-weight: bold;
+  font-size: 18px;
+  background-color: rgb(255, 174, 0);
+  background-image: linear-gradient(-90deg, rgb(0, 187, 255), #007ed2);
+  size: 20px;
+}
 /*===*/
 /* 搜索框布局 */
 .search-form {
@@ -448,10 +808,11 @@ export default {
   background-color: #ffffff;
   height: 100%;
   width: 1200px;
+  height: 240px;
   border: 1px solid #eee;
   box-shadow: 0 0 12px 0 rgb(0 0 0 / 6%);
   padding: 10px;
-  top: 0px;
+  top: -24px;
 }
 
 /* 出发-目的-日期-选类别的框 */
@@ -475,9 +836,20 @@ export default {
   box-shadow: 0 0 12px 0 rgb(0 0 0 / 6%);
 }
 
+.date-box2 {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  border: 1px solid;
+  border-radius: 6px;
+  width: 500px;
+  border: 1px solid #eee;
+  box-shadow: 0 0 12px 0 rgb(0 0 0 / 6%);
+}
+
 .cls-box-flight {
   display: flex;
-  margin-top: 50px;
+  margin-top: 20px;
   flex-direction: column;
   width: 500px;
   right: -50px;
@@ -485,7 +857,7 @@ export default {
 
 .cls-box-cabin {
   display: flex;
-  margin-top: 50px;
+  margin-top: 20px;
   flex-direction: column;
   width: 500px;
 }
@@ -506,6 +878,12 @@ export default {
   color: #3187f9;
   font-size: 20px;
   margin: 10px 0px 4px 15px;
+}
+
+.date-box2 span {
+  color: #3187f9;
+  font-size: 20px;
+  margin: 20px 0px 4px 15px;
 }
 
 .cls-box-flight span {
@@ -537,7 +915,7 @@ export default {
   box-shadow: 0 0 12px 0 rgb(0 0 0 / 10%);
 } */
 
-/* 出发目的框的出发框 */
+/* 出发目的框时间框小框 */
 .flt-depart {
   display: flex;
   flex-direction: column;
@@ -550,6 +928,13 @@ export default {
   left: 30px;
 }
 
+.date-box-dep {
+  margin: 10px 0px 0px 0px;
+}
+
+.date-box-des {
+  margin: 10px 20px 0px 0px;
+}
 /* 交换按钮 */
 .switch-button {
   position: relative;
@@ -573,10 +958,15 @@ export default {
   width: 300px;
 }
 
+.date-picker2 {
+  margin: 10px 10px 10px 10px;
+  width: 200px;
+}
+
 .search {
   position: relative;
-  top: 50%;
-  left: 70%;
+  top: 65%;
+  left: 120%;
   transform: translateX(-50%) translateY(-50%);
   text-decoration: none;
 }
@@ -601,5 +991,30 @@ export default {
   color: #fff;
 }
 
+.resultFilter {
+  display: flex;
+  flex-direction: row;
+  position: relative;
+  margin-top: 50px;
+}
+
+.filterInput {
+  margin: 20px 10px 10px 10px;
+  width: 160px;
+}
+
+.FilterContainer {
+  display: flex;
+}
+
+.SortContainer {
+  display: flex;
+  margin-top: 20px;
+  padding-left: 20px;
+}
+
+.sortBox {
+  margin-left: 30px;
+}
 /*===*/
 </style>
