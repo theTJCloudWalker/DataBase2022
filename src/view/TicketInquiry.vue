@@ -16,7 +16,7 @@
                   v-model="form.dep"
                   placeholder="请选择出发地"
                   filterable
-                  @click="setCacheDep"
+                  @click="cacheDep = form.dep"
                 >
                   <el-option
                     v-for="item in cities"
@@ -41,7 +41,7 @@
                   v-model="form.des"
                   placeholder="请选择目的地"
                   filterable
-                  @click="setCacheDes"
+                  @click="cacheDes = form.des"
                 >
                   <el-option
                     v-for="item in cities"
@@ -62,6 +62,7 @@
                 type="date"
                 placeholder="选择出发日期"
                 :disabled-date="disabledDate_dep"
+                @click="cacheDepDate = form.depDate"
               />
             </div>
           </div>
@@ -85,6 +86,7 @@
                   :disabled-date="disabledDate_back"
                   type="date"
                   placeholder="选择返回日期"
+                  @click="cacheDepDate = form.depDate"
                 />
               </div>
             </div>
@@ -309,6 +311,15 @@
                   >
                   <!-- </router-link> -->
                 </div>
+                <div v-if="ifPicked === true">
+                  <el-button
+                    size="small"
+                    type="primary"
+                    @click="Back(scope.$index)"
+                    >Back</el-button
+                  >
+                  <!-- </router-link> -->
+                </div>
                 <!--  -->
               </div>
             </template>
@@ -334,6 +345,8 @@ export default {
     return {
       cacheDep: "", //缓存上一个填入的地点，用来处理同地点
       cacheDes: "",
+      cacheDepDate: new Date(), //缓存上一个选择的出发时间，下同
+      cacheDesDate: new Date(),
       companyFilter: "", //筛选条件，下同
       depFilter: "",
       desFilter: "",
@@ -353,7 +366,7 @@ export default {
       },
       disabledDate_back(time) {
         //函数，禁用日期
-        return time.getTime() < Date.now() - 8.64e7;
+        return time.getTime() < Date.now();
       },
       /*======表单数据======*/
       form: {
@@ -450,13 +463,13 @@ export default {
       this.form.des = temp;
       console.log(this.form.pass);
     },
-    setCacheDep() {
-      //设置缓冲下同
-      this.cacheDep = this.form.dep;
-    },
-    setCacheDes() {
-      this.cacheDes = this.form.des;
-    },
+    // setCacheDep() {
+    //   //设置缓冲下同
+    //   this.cacheDep = this.form.dep;
+    // },
+    // setCacheDes() {
+    //   this.cacheDes = this.form.des;
+    // },
     rateSort() {
       //准点率排序函数
       this.flightTable.sort((a, b) => {
@@ -510,7 +523,7 @@ export default {
       let pass_ = this.form.pass;
       this.order.push({ flightId: fid, flight: fname, pass: pass_ });
       //跳转到支付订购
-      console.log(this.order);
+      console.log(this.order); //等待发射order
       //  this.$router.push({
       //   path: "/order",
       //   //这里传的是一个对象
@@ -562,12 +575,17 @@ export default {
       this.ifPicked = false;
       this.order = [];
     },
+    // "form.depDate"() {
+    //   console.log(this.form.depDate);
+    //   if (this.form.depDate == null || this.form.depDate < this.form.backDate) this.form.depDate = this.cacheDepDate;
+    // },
   },
 
   mounted() {
-    this.form.depDate = new Date();
-    console.log(this.form.dep, this.form.des);
-    this.ticketInquiry(this.form.dep, this.form.des);
+    this.form.depDate = new Date(); //初始化返程日期，如果有
+    this.form.backDate = new Date();
+    this.form.backDate.setDate(this.form.depDate.getDate() + 1);
+    this.ticketInquiry(this.form.dep, this.form.des); //渲染完后就显示搜索结果
   },
 };
 </script>
