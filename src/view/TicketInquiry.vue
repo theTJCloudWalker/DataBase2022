@@ -153,6 +153,25 @@
               />
             </div>
             <div class="filterInput">
+              <el-input
+                v-model="depFilter"
+                placeholder="请筛选起飞机场"
+                filterable
+              />
+            </div>
+            <div class="filterInput">
+              <el-input
+                v-model="desFilter"
+                placeholder="请筛选降落机场"
+                filterable
+              />
+            </div>
+            <div class="filterInput">
+              <el-button type="success" @click="clearFilter()">
+                清空筛选条件
+              </el-button>
+            </div>
+            <!-- <div class="filterInput">
               <el-select
                 v-model="companyFilter"
                 placeholder="请筛选航空公司"
@@ -165,7 +184,7 @@
                   :value="item.company"
                 />
               </el-select>
-            </div>
+            </div> -->
           </div>
           <!-- ============排序按钮============== -->
           <div class="SortContainer">
@@ -203,7 +222,11 @@
         <el-table
           :data="
             flightTable.filter(
-              (data) => !companyFilter || data.company.includes(companyFilter)
+              (data) =>
+                (!companyFilter && !desFilter && !depFilter) ||
+                (data.company.includes(companyFilter) &&
+                  data.departureAirplane.includes(depFilter) &&
+                  data.destinationAirplane.includes(desFilter))
             )
           "
           height="250"
@@ -282,6 +305,7 @@
 <script>
 import { ref } from "vue";
 import { ElTable } from "element-plus";
+import axios from "axios";
 export default {
   name: "TicketInquiry",
   components: {},
@@ -294,6 +318,15 @@ export default {
       companyFilter: "", //筛选条件，下同
       depFilter: "",
       desFilter: "",
+      priceTable: [
+        {
+          value: 500,
+          label: "0~500",
+        },
+        {
+          value: 1000,
+        },
+      ], //用于筛选
       disabledDate_dep(time) {
         //函数，禁用日期
         return time.getTime() < Date.now() - 8.64e7;
@@ -427,17 +460,40 @@ export default {
         return 0;
       });
     },
+    clearFilter() {
+      //清空筛选器
+      this.depFilter = "";
+      this.desFilter = "";
+      this.companyFilter = "";
+    },
     /*====================================*/
 
     /*======该方法是：通过点击按钮，向后端发送数据，然后返回得到的数据===*/
     ticketInquiry() {
-      //发送起始地目的地之类的，返回一个数组
-      // ctx.$axios.post("url", );
-      // console.log(this.departure);
+      let that = this;
+      const restable = this.get();
+      restable.then(function (response) {
+        console.log(response.data);
+        that.flightTable = [];
+        response.data.data.forEach((value) => that.flightTable.push(value));
+      });
     },
 
     handlePay(x, y) {
       //跳转到支付订购
+    },
+
+    /*=== 关键函数get用于获取数据 ===*/
+    get() {
+      let that = this;
+      return axios({
+        method: "post",
+        url: "https://150.158.80.33:7191/api/Flight/Filter",
+        data: {
+          departureAirport: that.form.dep,
+          arrivalAirport: that.form.des,
+        },
+      });
     },
   },
 
@@ -460,6 +516,7 @@ export default {
 
   mounted() {
     this.form.depDate = new Date();
+    this.ticketInquiry();
   },
 };
 </script>
@@ -872,7 +929,7 @@ export default {
 
 .filterInput {
   margin: 20px 10px 10px 10px;
-  width: 200px;
+  width: 160px;
 }
 
 .FilterContainer {
@@ -882,11 +939,11 @@ export default {
 .SortContainer {
   display: flex;
   margin-top: 20px;
-  padding-left: 300px;
+  padding-left: 20px;
 }
 
-.sortBox{
-  margin-left:30px;
+.sortBox {
+  margin-left: 30px;
 }
 /*===*/
 </style>
